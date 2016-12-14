@@ -124,7 +124,7 @@ class RabbitRule(Rule):
 				moveset[i] == NOT_POSSIBLE		
 		
 	def performMove(self, plane, src_x, src_y, dest_x, dest_y):
-		if plane.widgets[dest_x][dest_y].agent == None:	
+		if plane.widgets[dest_x][dest_y].image == self.empty:	
 			plane.widgets[dest_x][dest_y].agent = plane.widgets[src_x][src_y].agent
 			plane.widgets[dest_x][dest_y].image = plane.widgets[src_x][src_y].image
 			plane.widgets[dest_x][dest_y].configure(image = plane.widgets[src_x][src_y].image)
@@ -233,7 +233,7 @@ class App(object):
 		steps = 200
 		t2, t = t, t2
 		for k in range(0, steps):
-			
+			movedMatrix = [[0 for m in range(0, len(t.widgets[n]))] for n in range(0, len(t.widgets))] 
 			for i in range(0, len(t.widgets)):
 				for j in range(0, len(t.widgets[i])):
 					if hasattr(t.widgets[i][j], 'image'):
@@ -247,7 +247,8 @@ class App(object):
 						if not (j == len(t.widgets[i]) - 1):
 							neighbours[Rule.RIGHT] = t.widgets[i][j+1].image
 						if t.widgets[i][j].image == rabbit or t.widgets[i][j].image == wolf or t.widgets[i][j].image == wolf_in_grass:
-							t.widgets[i][j].agent.move(i, j, neighbours, len(t.widgets) - 1, len(t.widgets[i]) - 1, t)
+							if (movedMatrix[i][j] == 0):
+								t.widgets[i][j].agent.move(i, j, neighbours, len(t.widgets) - 1, len(t.widgets[i]) - 1, t, movedMatrix)
 						
 			#t2 = copy.deepcopy(t)		
 			#t.destroy()
@@ -266,7 +267,7 @@ class App(object):
 				a.set_xlim([k - 100, k])
 			a.set_ylim([0, len(t.widgets[i]) * len(t.widgets)])
 			canvas.draw()
-			
+			time.sleep(1)
 			t.randomPlacement(grass, 5, GrassAgent(grass, None, grass_energy))
 			#self.master.update()
 			#time.sleep(0.001)
@@ -298,7 +299,7 @@ class Agent(object):
 	def energy(self):
 		return self._energy
 	
-	def move(self, x_pos, y_pos, neighbourHood, max_x, max_y, plane):
+	def move(self, x_pos, y_pos, neighbourHood, max_x, max_y, plane, movedMatrix):
 		pass
 		
 class RabbitAgent(Agent):
@@ -319,7 +320,7 @@ class RabbitAgent(Agent):
 	def energy_for_move(self):
 		return self._energy_for_move
 	
-	def reproduce(self, plane, row, column, max_row, max_column):
+	def reproduce(self, plane, row, column, max_row, max_column, movedMatrix):
 		reproduce_set = []
 		if row == max_row:
 			if not (plane.widgets[row - 1][column].image == self.rule.wolf or plane.widgets[row - 1][column].image == self.rule.rabbit):
@@ -345,8 +346,9 @@ class RabbitAgent(Agent):
 			self.addEnergy(-self.birthThreshold)
 			plane.widgets[move_tuple[0]][move_tuple[1]].agent = RabbitAgent(self.image, self.rule, self.birthThreshold, self.energy_for_move, 10)
 			plane.widgets[move_tuple[0]][move_tuple[1]].image = self.rule.rabbit
+			movedMatrix[move_tuple[0]][move_tuple[1]] = 1
 			
-	def move(self, x_pos, y_pos, neighbourHood, max_x, max_y, plane):
+	def move(self, x_pos, y_pos, neighbourHood, max_x, max_y, plane, movedMatrix):
 		self._energy -= self.energy_for_move
 		moves = self.rule.moveSet(x_pos, y_pos, neighbourHood, max_x, max_y)
 		if self.die():
@@ -370,10 +372,12 @@ class RabbitAgent(Agent):
 		
 		if move == Rule.UP:
 			self.rule.performMove(plane, x_pos, y_pos, x_pos - 1, y_pos)
+			
 			x_pos = x_pos - 1
 		if move == Rule.DOWN:
 			self.rule.performMove(plane, x_pos, y_pos, x_pos + 1, y_pos)
 			x_pos = x_pos + 1
+			
 		if move == Rule.LEFT:
 			self.rule.performMove(plane, x_pos, y_pos, x_pos, y_pos - 1)
 			y_pos = y_pos - 1
@@ -381,7 +385,8 @@ class RabbitAgent(Agent):
 			self.rule.performMove(plane, x_pos, y_pos, x_pos, y_pos + 1)
 			y_pos = y_pos + 1
 	
-		self.reproduce(plane, x_pos, y_pos, max_x, max_y)
+		movedMatrix[x_pos][y_pos] = 1
+		self.reproduce(plane, x_pos, y_pos, max_x, max_y, movedMatrix)
 	
 	def die(self):
 		if (self.energy < 0):
@@ -392,7 +397,7 @@ class WolfAgent(Agent):
 	def __init__(self, image, rule):
 		super(WolfAgent, self).__init__(image, rule)
 		
-	def move(self, x_pos, y_pos, neighbourHood, max_x, max_y, plane):
+	def move(self, x_pos, y_pos, neighbourHood, max_x, max_y, plane, movedMatrix):
 		moves = self.rule.moveSet(x_pos, y_pos, neighbourHood, max_x, max_y)
 		
 		movesCounter = 0
@@ -412,12 +417,16 @@ class WolfAgent(Agent):
 		
 		if move == Rule.UP:
 			self.rule.performMove(plane, x_pos, y_pos, x_pos - 1, y_pos)
+			movedMatrix[x_pos - 1][y_pos] = 1
 		if move == Rule.DOWN:
 			self.rule.performMove(plane, x_pos, y_pos, x_pos + 1, y_pos)
+			movedMatrix[x_pos + 1][y_pos]
 		if move == Rule.LEFT:
 			self.rule.performMove(plane, x_pos, y_pos, x_pos, y_pos - 1)
+			movedMatrix[x_pos][y_pos - 1]
 		if move == Rule.RIGHT:
 			self.rule.performMove(plane, x_pos, y_pos, x_pos, y_pos + 1)
+			movedMatrix[x_pos][y_pos + 1]
 	
 class GrassAgent(Agent):
 	def __init__(self, image, rule, energy):
