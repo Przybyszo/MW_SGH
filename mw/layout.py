@@ -5,6 +5,10 @@ from PIL import ImageTk, Image
 from random import randint
 import time
 import copy
+import matplotlib
+matplotlib.use('TkAgg')
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+from matplotlib.figure import Figure
 
 
 class Rule(object):
@@ -22,11 +26,16 @@ class Rule(object):
 	COVER = 3
 	EAT = 4
 	
-	def __init__(self, rabbit, wolf, grass, wolf_in_grass):
+	def __init__(self, rabbit, wolf, grass, wolf_in_grass, empty):
 		self._rabbit = rabbit
 		self._wolf = wolf
 		self._grass = grass
 		self._wolf_in_grass = wolf_in_grass
+		self._empty = empty
+		
+	@property
+	def empty(self):
+		return self._empty
 		
 	@property
 	def grass(self):
@@ -60,9 +69,9 @@ class Rule(object):
 		pass
 		
 	def removeAgent(self, plane, x, y):
-		plane.widgets[x][y].configure(image = '')
+		plane.widgets[x][y].configure(image = self.empty)
 		plane.widgets[x][y].agent = None
-		plane.widgets[x][y].image = None
+		plane.widgets[x][y].image = self.empty
 
 class WolfRule(Rule):
 	def moveset(self, x_pos, y_pos, neighbourHood, max_x, max_y, rabbit, wolf, grass):
@@ -72,7 +81,7 @@ class WolfRule(Rule):
 				moveset[i] == NOT_POSSIBLE		
 	
 	def performMove(self, plane, src_x, src_y, dest_x, dest_y):
-		if plane.widgets[dest_x][dest_y].agent == None or plane.widgets[dest_x][dest_y].image == self.rabbit:	
+		if plane.widgets[dest_x][dest_y].agent == self.empty or plane.widgets[dest_x][dest_y].image == self.rabbit:	
 			if plane.widgets[src_x][src_y].image == self.wolf_in_grass:
 				plane.widgets[dest_x][dest_y].agent = plane.widgets[src_x][src_y].agent
 				plane.widgets[dest_x][dest_y].image = self.wolf
@@ -86,9 +95,9 @@ class WolfRule(Rule):
 				plane.widgets[dest_x][dest_y].agent = plane.widgets[src_x][src_y].agent
 				plane.widgets[dest_x][dest_y].image = plane.widgets[src_x][src_y].image
 				plane.widgets[dest_x][dest_y].configure(image = plane.widgets[src_x][src_y].image)
-				plane.widgets[src_x][src_y].configure(image = '')
+				plane.widgets[src_x][src_y].configure(image = self.empty)
 				plane.widgets[src_x][src_y].agent = None
-				plane.widgets[src_x][src_y].image = None
+				plane.widgets[src_x][src_y].image = self.empty
 		elif plane.widgets[dest_x][dest_y].image == self.grass:
 			if plane.widgets[src_x][src_y].image == self.wolf_in_grass:
 				plane.widgets[dest_x][dest_y].agent = plane.widgets[src_x][src_y].agent
@@ -103,9 +112,9 @@ class WolfRule(Rule):
 				plane.widgets[dest_x][dest_y].agent = plane.widgets[src_x][src_y].agent
 				plane.widgets[dest_x][dest_y].image = self.wolf_in_grass
 				plane.widgets[dest_x][dest_y].configure(image = self.wolf_in_grass)
-				plane.widgets[src_x][src_y].configure(image = '')
+				plane.widgets[src_x][src_y].configure(image = self.empty)
 				plane.widgets[src_x][src_y].agent = None
-				plane.widgets[src_x][src_y].image = None
+				plane.widgets[src_x][src_y].image = self.empty
 		
 class RabbitRule(Rule):	
 	def moveset(self, x_pos, y_pos, neighbourHood, max_x, max_y):
@@ -119,17 +128,17 @@ class RabbitRule(Rule):
 			plane.widgets[dest_x][dest_y].agent = plane.widgets[src_x][src_y].agent
 			plane.widgets[dest_x][dest_y].image = plane.widgets[src_x][src_y].image
 			plane.widgets[dest_x][dest_y].configure(image = plane.widgets[src_x][src_y].image)
-			plane.widgets[src_x][src_y].configure(image = '')
+			plane.widgets[src_x][src_y].configure(image = self.empty)
 			plane.widgets[src_x][src_y].agent = None
-			plane.widgets[src_x][src_y].image = None
+			plane.widgets[src_x][src_y].image = self.empty
 		if plane.widgets[dest_x][dest_y].image == self.grass:
 			plane.widgets[src_x][src_y].agent.addEnergy(plane.widgets[dest_x][dest_y].agent.energy)
 			plane.widgets[dest_x][dest_y].agent = plane.widgets[src_x][src_y].agent
 			plane.widgets[dest_x][dest_y].image = plane.widgets[src_x][src_y].image
 			plane.widgets[dest_x][dest_y].configure(image = plane.widgets[src_x][src_y].image)
-			plane.widgets[src_x][src_y].configure(image = '')
+			plane.widgets[src_x][src_y].configure(image = self.empty)
 			plane.widgets[src_x][src_y].agent = None
-			plane.widgets[src_x][src_y].image = None
+			plane.widgets[src_x][src_y].image = self.empty
 
 class App(object):
 	def __init__(self, master):
@@ -138,6 +147,7 @@ class App(object):
 		wolf_path = os.getcwd() + '/static/wolf.jpg'
 		grass_path = os.getcwd() + '/static/grass.jpg'
 		wolf_in_grass_path = os.getcwd() + '/static/wolf_in_grass.jpg'
+		empty_path = os.getcwd() + '/static/black.jpg'
 		
 		master.title("Multiagent systems - rabbitsWolfsGrassWeeds")
 		master.minsize(width=800, height=800)
@@ -146,16 +156,17 @@ class App(object):
 		
 		grass_energy = 10
 		
-		button = tk.Button(master, text="Initialize", command=lambda: self.initialize(t, t2))
+		button = tk.Button(master, text="Initialize", command=lambda: self.initialize(t, t2, rabbit, wolf, grass, wolf_in_grass, grass_energy, empty))
 		button.pack()
 		
-		button2 = tk.Button(master, text="Run simulation", command=lambda: self.run(t, t2, rabbit, wolf, grass, wolf_in_grass, grass_energy))
+		button2 = tk.Button(master, text="Run simulation", command=lambda: self.run(t, t2, rabbit, wolf, grass, wolf_in_grass, grass_energy, empty, a, canvas))
 		button2.pack()
 		
 		rabbit = Image.open(rabbit_path)
 		grass = Image.open(grass_path)
 		wolf = Image.open(wolf_path)
 		wolf_in_grass = Image.open(wolf_in_grass_path)
+		empty = Image.open(empty_path)
 		
 		rabbit = rabbit.resize((40, 40), PIL.Image.ANTIALIAS)
 		rabbit = ImageTk.PhotoImage(rabbit)
@@ -169,21 +180,24 @@ class App(object):
 		wolf_in_grass = wolf_in_grass.resize((40, 40), PIL.Image.ANTIALIAS)
 		wolf_in_grass = ImageTk.PhotoImage(wolf_in_grass)
 		
-		t = SimpleTable(master, 10, 10)
+		empty = empty.resize((40, 40), PIL.Image.ANTIALIAS)
+		empty = ImageTk.PhotoImage(empty)
+		
+		t = SimpleTable(master, empty, 10, 10)
 		t.pack(side="top", fill="x")
 		
-		t2 = SimpleTable(master, 10, 10)
-		
-		birthThreshold = 10
-		energy_for_move = 0.5
-		rabbit_init_energy = 10
-		
-		t2.randomPlacement(rabbit, 5, RabbitAgent(rabbit, RabbitRule(rabbit, wolf, grass, wolf_in_grass), birthThreshold, energy_for_move, rabbit_init_energy))
-		t2.randomPlacement(grass, 5, GrassAgent(grass, None, grass_energy))
-		t2.randomPlacement(wolf, 5, WolfAgent(wolf, WolfRule(rabbit, wolf, grass, wolf_in_grass)))
+		t2 = SimpleTable(master, empty, 10, 10)
 		
 		t.destroy()
 		t2.pack()
+		
+		f = Figure(figsize=(5, 5), dpi=100)
+		a = f.add_subplot(111)
+		a.set_xlim([0, 100])
+		a.set_ylim([0, 50])
+		canvas = FigureCanvasTkAgg(f, master)
+		canvas.show()
+		canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 		
 		steps = 1
 		
@@ -198,15 +212,27 @@ class App(object):
 		#	t.destroy()
 		#	t2.pack()
 	
+	def initialize(self, t, t2, rabbit, wolf, grass, wolf_in_grass, grass_energy, empty):
+		birthThreshold = 10
+		energy_for_move = 0.5
+		rabbit_init_energy = 10
+		
+		t2.randomPlacement(rabbit, 5, RabbitAgent(rabbit, RabbitRule(rabbit, wolf, grass, wolf_in_grass, empty), birthThreshold, energy_for_move, rabbit_init_energy))
+		t2.randomPlacement(grass, 5, GrassAgent(grass, None, grass_energy))
+		t2.randomPlacement(wolf, 5, WolfAgent(wolf, WolfRule(rabbit, wolf, grass, wolf_in_grass, empty)))
+	
 	@property
 	def master(self):
 		return self._master
 	
-	def run(self, t, t2, rabbit, wolf, grass, wolf_in_grass, grass_energy=None):
-		print(self)
-		steps = 1
+	def run(self, t, t2, rabbit, wolf, grass, wolf_in_grass, grass_energy, empty, a, canvas):
+		
+		x = [0]
+		y = [5]
+		
+		steps = 200
 		t2, t = t, t2
-		for i in range(0, steps):
+		for k in range(0, steps):
 			
 			for i in range(0, len(t.widgets)):
 				for j in range(0, len(t.widgets[i])):
@@ -222,14 +248,37 @@ class App(object):
 							neighbours[Rule.RIGHT] = t.widgets[i][j+1].image
 						if t.widgets[i][j].image == rabbit or t.widgets[i][j].image == wolf or t.widgets[i][j].image == wolf_in_grass:
 							t.widgets[i][j].agent.move(i, j, neighbours, len(t.widgets) - 1, len(t.widgets[i]) - 1, t)
-						print('Row: ' + str(i) + ' Col: ' + str(j))
 						
 			#t2 = copy.deepcopy(t)		
 			#t.destroy()
 			#t2.pack()
+			rabbitsNo = self.countRabbits(t, rabbit)
+			x.append(k + 1)
+			y.append(rabbitsNo)
+			print(x)
+			print(y)
+			print('---')
+			a.clear()
+			a.plot(x, y)
+			if k <= 100:
+				a.set_xlim([0, 100])
+			else:
+				a.set_xlim([k - 100, k])
+			a.set_ylim([0, len(t.widgets[i]) * len(t.widgets)])
+			canvas.draw()
+			
 			t.randomPlacement(grass, 5, GrassAgent(grass, None, grass_energy))
-			self.master.update()
-			time.sleep(0.001)
+			#self.master.update()
+			#time.sleep(0.001)
+	
+	def countRabbits(self, t, rabbit):
+		counter = 0
+		for i in range(0, len(t.widgets)):
+				for j in range(0, len(t.widgets[i])):
+					if hasattr(t.widgets[i][j], 'image'):
+						if t.widgets[i][j].image == rabbit:
+							counter += 1
+		return counter
 
 class Agent(object):
 	def __init__(self, image, rule):
@@ -290,7 +339,6 @@ class RabbitAgent(Agent):
 		
 		rand = randint(0, len(reproduce_set) - 1)
 		
-		print(rand)
 		if (self.energy >= self.birthThreshold):
 			move_tuple = reproduce_set[rand]
 			#RABBIT DEFAULT ENERGY
@@ -320,10 +368,6 @@ class RabbitAgent(Agent):
 					move = rand
 					break
 		
-		print('Moveset: ' + str(moves))
-		print('Move: ' + str(move))
-		print('Rabbit:' + str(self.energy))
-		print('Row: ' + str(x_pos) + ' Col: ' + str(y_pos))
 		if move == Rule.UP:
 			self.rule.performMove(plane, x_pos, y_pos, x_pos - 1, y_pos)
 			x_pos = x_pos - 1
@@ -366,10 +410,6 @@ class WolfAgent(Agent):
 					move = rand
 					break
 		
-		print('Moveset: ' + str(moves))
-		print('Move: ' + str(move))
-		print('Wolf:' + str(self.energy))
-		print('Row: ' + str(x_pos) + ' Col: ' + str(y_pos))
 		if move == Rule.UP:
 			self.rule.performMove(plane, x_pos, y_pos, x_pos - 1, y_pos)
 		if move == Rule.DOWN:
@@ -392,19 +432,21 @@ class GrassAgent(Agent):
 		return None
 			
 class SimpleTable(tk.Frame):
-	def __init__(self, parent, rows=10, columns=10):
+	def __init__(self, parent, empty, rows=10, columns=10):
 		# use black background so it "peeks through" to 
 		# form grid lines
 		tk.Frame.__init__(self, parent, background="black")
 		self._widgets = []
 		self._rows = rows
 		self._columns = columns
+		self._empty = empty
 		for row in range(rows):
 			current_row = []
 			for column in range(columns):
-				label = tk.Label(self, width=4, height=2, relief="ridge")
+				label = tk.Label(self, width=40, height=40, relief="ridge")
 				label.grid(row=row, column=column, sticky="wnes", padx=2, pady=2)
-				label.image = None
+				label.configure(image = self.empty)
+				label.image = empty
 				label.agent = None
 				current_row.append(label)
 			self._widgets.append(current_row)
@@ -412,6 +454,10 @@ class SimpleTable(tk.Frame):
 		for column in range(columns):
 			self.grid_columnconfigure(column, weight=4)
 
+	@property
+	def empty(self):
+		return self._empty
+			
 	@property
 	def columns(self):
 		return self._columns
@@ -434,7 +480,7 @@ class SimpleTable(tk.Frame):
 			iterations -= 1
 			randRow = randint(0, self.rows - 1)
 			randCol = randint(0, self.columns - 1)
-			if (self._widgets[randRow][randCol].image is None):
+			if (self._widgets[randRow][randCol].image == self.empty):
 				self._widgets[randRow][randCol].configure(image = image)
 				self._widgets[randRow][randCol].image = image
 				self._widgets[randRow][randCol].agent = copy.copy(agent)
