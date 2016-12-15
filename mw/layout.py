@@ -155,12 +155,131 @@ class App(object):
 		basewidth = 30
 		
 		grass_energy = 10
+
+		up = tk.Frame(master)
+
+		up.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+		up_left = tk.Frame(master)
+		up_left.pack(in_=up, side=tk.LEFT, fill=tk.BOTH, expand=True)
+		up_center = tk.Frame(master)
+		up_center.pack(in_=up, side=tk.LEFT, fill=tk.BOTH, expand=True)
+		
+		up_right = tk.Frame(master)
+		up_right.pack(in_=up, side=tk.RIGHT, fill=tk.BOTH)
 		
 		button = tk.Button(master, text="Initialize", command=lambda: self.initialize(t, t2, rabbit, wolf, grass, wolf_in_grass, grass_energy, empty))
-		button.pack()
+		button.pack(in_=up_right, fill='x')
 		
-		button2 = tk.Button(master, text="Run simulation", command=lambda: self.run(t, t2, rabbit, wolf, grass, wolf_in_grass, grass_energy, empty, a, canvas))
-		button2.pack()
+		button2 = tk.Button(master, text="Run simulation", command=lambda: self.run(t, t2, rabbit, wolf, grass, wolf_in_grass, grass_energy, empty, a, canvas, a2, canvas2))
+		button2.pack(in_=up_right, fill='x')
+		
+		up_left_first = tk.Frame(master)
+		up_left_first.pack(in_=up_left, fill='x')
+		
+		rabbitInitText = tk.StringVar()
+		rabbitInitText.set("Enter initial number of rabbits")
+		rabbitInitLabel=tk.Label(master, textvariable=rabbitInitText, height=4)
+		rabbitInitLabel.grid(row=2, sticky='w')
+		rabbitInitLabel.pack(in_=up_left_first, side="left")
+
+		rabbitInitEntry=tk.Entry(master,textvariable=tk.StringVar(None),width=10)
+		rabbitInitEntry.grid(row=2, sticky='w')
+		rabbitInitEntry.pack(in_=up_left_first, side="left")
+		
+		self._rabbitInitEntry = rabbitInitEntry
+		
+		up_left_first_2 = tk.Frame(master)
+		up_left_first_2.pack(in_=up_left, fill='x')
+		
+		wolfInitText = tk.StringVar()
+		wolfInitText.set("Enter initial number of wolfs")
+		wolfInitLabel=tk.Label(master, textvariable=wolfInitText, height=4)
+		wolfInitLabel.grid(row=2, column=3)
+		wolfInitLabel.pack(in_=up_left_first_2, side="left", fill='x')
+
+		wolfInitEntry=tk.Entry(master,textvariable=tk.StringVar(None),width=10)
+		wolfInitEntry.grid(row=2, sticky='w')
+		wolfInitEntry.pack(in_=up_left_first_2, side="left")		
+		
+		self._wolfInitEntry = wolfInitEntry
+		
+		up_left_second = tk.Frame(master)
+		up_left_second.pack(in_=up_left, fill='x')
+		
+		grassInitText = tk.StringVar()
+		grassInitText.set("Enter grass growing rate per step")
+		grassInitLabel=tk.Label(master, textvariable=grassInitText, height=4)
+		grassInitLabel.pack(in_=up_left_second, side="left")
+
+		grassInitEntry=tk.Entry(master,textvariable=tk.StringVar(None),width=10)
+		grassInitEntry.pack(in_=up_left_second, side="left")
+
+		self._grassInitEntry = grassInitEntry
+		
+		up_left_second_2= tk.Frame(master)
+		up_left_second_2.pack(in_=up_left, fill='x')
+		
+		birthdayRabbitThresholdText = tk.StringVar()
+		birthdayRabbitThresholdText.set("Enter the rabbit birthday energy threshold")
+		birthdayRabbitThresholdLabel=tk.Label(master, textvariable=birthdayRabbitThresholdText, height=4)
+		birthdayRabbitThresholdLabel.pack(in_=up_left_second_2, side="left")
+
+		birthdayRabbitThresholdEntry=tk.Entry(master,textvariable=tk.StringVar(None),width=10)
+		birthdayRabbitThresholdEntry.pack(in_=up_left_second_2, side="left")	
+		
+		self._birthdayRabbitThresholdEntry = birthdayRabbitThresholdEntry
+		
+		up_left_third = tk.Frame(master)
+		up_left_third.pack(in_=up_left, fill='x')
+		
+		rabbitMoveCostText = tk.StringVar()
+		rabbitMoveCostText.set("Enter rabbit energy cost for movement")
+		rabbitMoveCostLabel=tk.Label(master, textvariable=rabbitMoveCostText, height=4)
+		rabbitMoveCostLabel.pack(in_=up_left_third, side="left")
+
+		rabbitMoveCostEntry=tk.Entry(master,textvariable=tk.StringVar(None),width=10)
+		rabbitMoveCostEntry.pack(in_=up_left_third, side="left")
+
+		self._rabbitMoveCostEntry = rabbitMoveCostEntry
+		
+		up_left_third_2 = tk.Frame(master)
+		up_left_third_2.pack(in_=up_left, fill='x')
+		
+		RabbitInitialEnergyText = tk.StringVar()
+		RabbitInitialEnergyText.set("Enter the rabbit initial energy")
+		RabbitInitialEnergyLabel=tk.Label(master, textvariable=RabbitInitialEnergyText, height=4)
+		RabbitInitialEnergyLabel.pack(in_=up_left_third_2, side="left")
+
+		RabbitInitialEnergyEntry=tk.Entry(master,textvariable=tk.StringVar(None),width=10)
+		RabbitInitialEnergyEntry.pack(in_=up_left_third_2, side="left")	
+
+		self._RabbitInitialEnergyEntry = RabbitInitialEnergyEntry
+		
+		up_left_forth = tk.Frame(master)
+		up_left_forth.pack(in_=up_left, fill='x')
+		
+		grassEnergyText = tk.StringVar()
+		grassEnergyText.set("Enter grass energy boost")
+		grassEnergyLabel=tk.Label(master, textvariable=grassEnergyText, height=4)
+		grassEnergyLabel.pack(in_=up_left_forth, side="left")
+
+		grassEnergyEntry=tk.Entry(master,textvariable=tk.StringVar(None),width=10)
+		grassEnergyEntry.pack(in_=up_left_forth, side="left")
+		
+		self._grassEnergyEntry = grassEnergyEntry
+		
+		up_left_forth_2 = tk.Frame(master)
+		up_left_forth_2.pack(in_=up_left, fill='x')
+		
+		stepsText = tk.StringVar()
+		stepsText.set("Enter number of steps")
+		stepsLabel=tk.Label(master, textvariable=stepsText, height=4)
+		stepsLabel.pack(in_=up_left_forth_2, side="left")
+
+		stepsEntry=tk.Entry(master,textvariable=tk.StringVar(None),width=10)
+		stepsEntry.pack(in_=up_left_forth_2, side="left")
+
+		self._stepsEntry = stepsEntry
 		
 		rabbit = Image.open(rabbit_path)
 		grass = Image.open(grass_path)
@@ -182,22 +301,28 @@ class App(object):
 		
 		empty = empty.resize((40, 40), PIL.Image.ANTIALIAS)
 		empty = ImageTk.PhotoImage(empty)
-		
+
 		t = SimpleTable(master, empty, 10, 10)
 		t.pack(side="top", fill="x")
 		
 		t2 = SimpleTable(master, empty, 10, 10)
 		
 		t.destroy()
-		t2.pack()
+		t2.pack(in_=up_center)
 		
+		bottom = tk.Frame(master)
+		bottom.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
 		f = Figure(figsize=(5, 5), dpi=100)
 		a = f.add_subplot(111)
-		a.set_xlim([0, 100])
-		a.set_ylim([0, 50])
 		canvas = FigureCanvasTkAgg(f, master)
 		canvas.show()
-		canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+		canvas.get_tk_widget().pack(in_=bottom, side=tk.LEFT, expand=True)
+		
+		f2 = Figure(figsize=(5, 5), dpi=100)
+		a2 = f2.add_subplot(111)
+		canvas2 = FigureCanvasTkAgg(f2, master)
+		canvas2.show()
+		canvas2.get_tk_widget().pack(in_=bottom, side=tk.LEFT, expand=True)
 		
 		steps = 1
 		
@@ -216,19 +341,22 @@ class App(object):
 		birthThreshold = 10
 		energy_for_move = 0.5
 		rabbit_init_energy = 10
-		
-		t2.randomPlacement(rabbit, 5, RabbitAgent(rabbit, RabbitRule(rabbit, wolf, grass, wolf_in_grass, empty), birthThreshold, energy_for_move, rabbit_init_energy))
-		t2.randomPlacement(grass, 5, GrassAgent(grass, None, grass_energy))
-		t2.randomPlacement(wolf, 5, WolfAgent(wolf, WolfRule(rabbit, wolf, grass, wolf_in_grass, empty)))
+	
+		print(self._wolfInitEntry.get())
+	
+		t2.randomPlacement(rabbit, int(self._rabbitInitEntry.get()) if self._rabbitInitEntry.get() <> '' else 5, RabbitAgent(rabbit, RabbitRule(rabbit, wolf, grass, wolf_in_grass, empty), birthThreshold, energy_for_move, rabbit_init_energy))
+		t2.randomPlacement(wolf, int(self._wolfInitEntry.get()) if self._wolfInitEntry.get() <> '' else 5, WolfAgent(wolf, WolfRule(rabbit, wolf, grass, wolf_in_grass, empty)))
+		t2.randomPlacement(grass, int(self._grassInitEntry.get()) if self._grassInitEntry.get() <> '' else 5, GrassAgent(grass, None, grass_energy))
 	
 	@property
 	def master(self):
 		return self._master
 	
-	def run(self, t, t2, rabbit, wolf, grass, wolf_in_grass, grass_energy, empty, a, canvas):
+	def run(self, t, t2, rabbit, wolf, grass, wolf_in_grass, grass_energy, empty, a, canvas, a2, canvas2):
 		
 		x = [0]
-		y = [5]
+		y = [self._rabbitInitEntry if self._rabbitInitEntry == '' else 5]
+		z = [self._grassInitEntry if self._grassInitEntry == '' else 5]
 		
 		steps = 200
 		t2, t = t, t2
@@ -254,21 +382,26 @@ class App(object):
 			#t.destroy()
 			#t2.pack()
 			rabbitsNo = self.countRabbits(t, rabbit)
+			grassNo = self.countGrass(t, grass, wolf_in_grass)
 			x.append(k + 1)
 			y.append(rabbitsNo)
-			print(x)
-			print(y)
-			print('---')
+			z.append(grassNo)
 			a.clear()
+			a2.clear()
 			a.plot(x, y)
+			a2.plot(x, z)
 			if k <= 100:
 				a.set_xlim([0, 100])
+				a2.set_xlim([0, 100])
 			else:
 				a.set_xlim([k - 100, k])
+				a2.set_xlim([k - 100, k])
 			a.set_ylim([0, len(t.widgets[i]) * len(t.widgets)])
+			a2.set_ylim([0, len(t.widgets[i]) * len(t.widgets)])
 			canvas.draw()
-			time.sleep(1)
-			t.randomPlacement(grass, 5, GrassAgent(grass, None, grass_energy))
+			canvas2.draw()
+			time.sleep(0.001)
+			t.randomPlacement(grass, int(self._grassInitEntry.get()) if self._grassInitEntry.get() <> '' else 5, GrassAgent(grass, None, grass_energy))
 			#self.master.update()
 			#time.sleep(0.001)
 	
@@ -281,6 +414,15 @@ class App(object):
 							counter += 1
 		return counter
 
+	def countGrass(self, t, grass, wolf_in_grass):
+		counter = 0
+		for i in range(0, len(t.widgets)):
+			for j in range(0, len(t.widgets[i])):
+				if hasattr(t.widgets[i][j], 'image'):
+					if t.widgets[i][j].image == grass or t.widgets[i][j].image == wolf_in_grass:
+						counter += 1
+		return counter
+		
 class Agent(object):
 	def __init__(self, image, rule):
 		self._image = image
@@ -494,7 +636,7 @@ class SimpleTable(tk.Frame):
 				self._widgets[randRow][randCol].image = image
 				self._widgets[randRow][randCol].agent = copy.copy(agent)
 				counter -= 1
-	
+		
 if __name__ == "__main__":
 	root = tk.Tk()
 	app = App(root)
