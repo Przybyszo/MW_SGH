@@ -9,6 +9,17 @@ import matplotlib
 matplotlib.use('TkAgg')
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.figure import Figure
+import itertools
+
+
+class resource_cl(object):
+	newid = itertools.count().next
+	def __init__(self):
+		self._id = resource_cl.newid()
+		
+	@property
+	def id(self):
+		return self._id
 
 
 class Rule(object):
@@ -74,14 +85,17 @@ class Rule(object):
 		plane.widgets[x][y].image = self.empty
 
 class WolfRule(Rule):
-	def moveset(self, x_pos, y_pos, neighbourHood, max_x, max_y, rabbit, wolf, grass):
-		moveset = super(WolfRule, self).moveset(x_pos, y_pos, neighbourHood, max_x, max_y)
+	def moveSet(self, x_pos, y_pos, neighbourHood, max_x, max_y):
+		moveset = super(WolfRule, self).moveSet(x_pos, y_pos, neighbourHood, max_x, max_y)
 		for i in range(self.LEFT, self.DOWN + 1):
-			if neighbour[i] == self.wolf:
-				moveset[i] == NOT_POSSIBLE		
+			print(str(i))
+			if neighbourHood[i] == self.wolf:
+				moveset[i] == self.NOT_POSSIBLE		
+		return moveset
 	
 	def performMove(self, app, plane, src_x, src_y, dest_x, dest_y):
-		if plane.widgets[dest_x][dest_y].agent == self.empty or plane.widgets[dest_x][dest_y].image == self.rabbit:	
+		print(str(src_x) + ':' + str(src_y) + ' moving to ' + str(dest_x) + ':' + str(dest_y))
+		if plane.widgets[dest_x][dest_y].image == self.empty or plane.widgets[dest_x][dest_y].image == self.rabbit:	
 			if plane.widgets[src_x][src_y].image == self.wolf_in_grass:
 				plane.widgets[dest_x][dest_y].agent = plane.widgets[src_x][src_y].agent
 				plane.widgets[dest_x][dest_y].image = self.wolf
@@ -113,14 +127,16 @@ class WolfRule(Rule):
 				plane.widgets[src_x][src_y].image = self.empty
 		
 class RabbitRule(Rule):	
-	def moveset(self, x_pos, y_pos, neighbourHood, max_x, max_y):
-		moveset = super(RabbitRule, self).moveset(x_pos, y_pos, neighbourHood, max_x, max_y)
+	def moveSet(self, x_pos, y_pos, neighbourHood, max_x, max_y):
+		moveset = super(RabbitRule, self).moveSet(x_pos, y_pos, neighbourHood, max_x, max_y)
 		for i in range(self.LEFT, self.DOWN + 1):
-			if neighbour[i] == self.rabbit or neighbour[i] == self.wolf:
-				moveset[i] == NOT_POSSIBLE		
-		
+			if neighbourHood[i] == self.rabbit or neighbourHood[i] == self.wolf:
+				moveset[i] == self.NOT_POSSIBLE		
+		return moveset
+	
 	def performMove(self, plane, src_x, src_y, dest_x, dest_y):
-		if plane.widgets[dest_x][dest_y].image == self.empty:	
+		print(str(src_x) + ':' + str(src_y) + ' moving to ' + str(dest_x) + ':' + str(dest_y))
+		if plane.widgets[dest_x][dest_y].image == self.empty:
 			plane.widgets[dest_x][dest_y].agent = plane.widgets[src_x][src_y].agent
 			plane.widgets[dest_x][dest_y].image = plane.widgets[src_x][src_y].image
 			plane.widgets[dest_x][dest_y].configure(image = plane.widgets[src_x][src_y].image)
@@ -348,6 +364,7 @@ class App(object):
 		
 		t2, t = t, t2
 		for k in range(0, int(self._stepsEntry.get()) if self._stepsEntry.get() <> '' else 200):
+			print('--------------------------------')
 			movedMatrix = [[0 for m in range(0, len(t.widgets[n]))] for n in range(0, len(t.widgets))] 
 			for i in range(0, len(t.widgets)):
 				for j in range(0, len(t.widgets[i])):
@@ -365,9 +382,6 @@ class App(object):
 							if (movedMatrix[i][j] == 0):
 								t.widgets[i][j].agent.move(i, j, neighbours, len(t.widgets) - 1, len(t.widgets[i]) - 1, t, movedMatrix)
 						
-			#t2 = copy.deepcopy(t)		
-			#t.destroy()
-			#t2.pack()
 			rabbitsNo = self.countRabbits(t, rabbit)
 			grassNo = self.countGrass(t, grass, wolf_in_grass)
 			x.append(k + 1)
@@ -387,11 +401,10 @@ class App(object):
 			a2.set_ylim([0, len(t.widgets[i]) * len(t.widgets)])
 			canvas.draw()
 			canvas2.draw()
-			time.sleep(0.001)
+			#time.sleep(1)
 			t.randomPlacement(grass, int(self._grassInitEntry.get()) if self._grassInitEntry.get() <> '' else 5, GrassAgent(self, grass, None))
-			#self.master.update()
-			#time.sleep(0.001)
-	
+			self.master.update()
+			
 	def countRabbits(self, t, rabbit):
 		counter = 0
 		for i in range(0, len(t.widgets)):
@@ -415,6 +428,11 @@ class Agent(object):
 		self._image = image
 		self._moveRule = rule
 		self._energy = 0
+		self._id = resource_cl().id
+		
+	@property
+	def id(self):
+		return self._id
 		
 	@property
 	def image(self):
@@ -446,34 +464,39 @@ class RabbitAgent(Agent):
 		
 	def reproduce(self, plane, row, column, max_row, max_column, movedMatrix):
 		reproduce_set = []
-		if row == max_row:
-			if not (plane.widgets[row - 1][column].image == self.rule.wolf or plane.widgets[row - 1][column].image == self.rule.rabbit):
+		if row <> 0:
+			if not plane.widgets[row - 1][column].image == self.rule.wolf and not plane.widgets[row - 1][column].image == self.rule.rabbit:
 				reproduce_set.append((row - 1, column))
-		if row == 0:
-			if not (plane.widgets[row + 1][column].image == self.rule.wolf or plane.widgets[row + 1][column].image == self.rule.rabbit):
+		if row <> max_row:
+			if not plane.widgets[row + 1][column].image == self.rule.wolf and not plane.widgets[row + 1][column].image == self.rule.rabbit:
 				reproduce_set.append((row + 1, column))
-		if column == max_column:
-			if not (plane.widgets[row][column - 1].image == self.rule.wolf or plane.widgets[row][column - 1].image == self.rule.rabbit):
+		if column <> 0:
+			if not plane.widgets[row][column - 1].image == self.rule.wolf and not plane.widgets[row][column - 1].image == self.rule.rabbit:
 				reproduce_set.append((row, column - 1))			
-		if column == 0:
-			if not (plane.widgets[row][column + 1].image == self.rule.wolf or plane.widgets[row][column + 1].image == self.rule.rabbit):
+		if column <> max_column:
+			if not plane.widgets[row][column + 1].image == self.rule.wolf and not plane.widgets[row][column + 1].image == self.rule.rabbit:
 				reproduce_set.append((row, column + 1))
 		
+		print('Len(reproduce_set): ' + str(len(reproduce_set)))
 		if len(reproduce_set) == 0:
 			return
 		
 		rand = randint(0, len(reproduce_set) - 1)
 		
-		if (self.energy >= int(app._birthdayRabbitThresholdEntry.get()) if app._birthdayRabbitThresholdEntry.get() <> '' else 10):
+		condition = int(app._birthdayRabbitThresholdEntry.get()) if app._birthdayRabbitThresholdEntry.get() <> '' else 10
+		
+		print('Reproducing: ' + 'energy: ' + str(self.energy) + ' vs birthdayThreshold: ' + str(condition))
+		if (self.energy >= condition):
 			move_tuple = reproduce_set[rand]
-			#RABBIT DEFAULT ENERGY
-			self.addEnergy(- int(app._birthdayRabbitThresholdEntry.get()) if app._birthdayRabbitThresholdEntry.get() <> '' else 10)
+			self.addEnergy(-0.5 * condition)
 			plane.widgets[move_tuple[0]][move_tuple[1]].agent = RabbitAgent(self.app, self.image, self.rule)
 			plane.widgets[move_tuple[0]][move_tuple[1]].image = self.rule.rabbit
+			plane.widgets[move_tuple[0]][move_tuple[1]].configure(image = self.rule.rabbit)
 			movedMatrix[move_tuple[0]][move_tuple[1]] = 1
 			
 	def move(self, x_pos, y_pos, neighbourHood, max_x, max_y, plane, movedMatrix):
-		self._energy -= int(self.app._rabbitMoveCostEntry.get()) if self.app._RabbitInitialEnergyEntry.get() <> '' else 0.5
+		self._energy -= int(self.app._rabbitMoveCostEntry.get()) if self.app._rabbitMoveCostEntry.get() <> '' else 0.5
+		print(type(self.rule).__name__)
 		moves = self.rule.moveSet(x_pos, y_pos, neighbourHood, max_x, max_y)
 		if self.die():
 			self.rule.removeAgent(plane, x_pos, y_pos)
@@ -495,19 +518,20 @@ class RabbitAgent(Agent):
 					break
 		
 		if move == Rule.UP:
-			self.rule.performMove(plane, x_pos, y_pos, x_pos - 1, y_pos)
-			
+			self.rule.performMove(plane, x_pos, y_pos, x_pos - 1, y_pos)	
 			x_pos = x_pos - 1
 		if move == Rule.DOWN:
 			self.rule.performMove(plane, x_pos, y_pos, x_pos + 1, y_pos)
 			x_pos = x_pos + 1
-			
 		if move == Rule.LEFT:
 			self.rule.performMove(plane, x_pos, y_pos, x_pos, y_pos - 1)
 			y_pos = y_pos - 1
 		if move == Rule.RIGHT:
 			self.rule.performMove(plane, x_pos, y_pos, x_pos, y_pos + 1)
 			y_pos = y_pos + 1
+	
+		print('Rabbit ' + str(self.id) + ' ' + str(x_pos) + ':' + str(y_pos) + ' moved: ' + str(move))
+		print('Energy ' + str(self.energy))
 	
 		movedMatrix[x_pos][y_pos] = 1
 		self.reproduce(plane, x_pos, y_pos, max_x, max_y, movedMatrix)
@@ -528,7 +552,6 @@ class WolfAgent(Agent):
 		
 	def move(self, x_pos, y_pos, neighbourHood, max_x, max_y, plane, movedMatrix):
 		moves = self.rule.moveSet(x_pos, y_pos, neighbourHood, max_x, max_y)
-		
 		movesCounter = 0
 		for i in range(0, len(moves)):
 			if not(moves[i] == Rule.NOT_POSSIBLE):
@@ -549,13 +572,15 @@ class WolfAgent(Agent):
 			movedMatrix[x_pos - 1][y_pos] = 1
 		if move == Rule.DOWN:
 			self.rule.performMove(self.app, plane, x_pos, y_pos, x_pos + 1, y_pos)
-			movedMatrix[x_pos + 1][y_pos]
+			movedMatrix[x_pos + 1][y_pos] = 1
 		if move == Rule.LEFT:
 			self.rule.performMove(self.app, plane, x_pos, y_pos, x_pos, y_pos - 1)
-			movedMatrix[x_pos][y_pos - 1]
+			movedMatrix[x_pos][y_pos - 1] = 1
 		if move == Rule.RIGHT:
 			self.rule.performMove(self.app, plane, x_pos, y_pos, x_pos, y_pos + 1)
-			movedMatrix[x_pos][y_pos + 1]
+			movedMatrix[x_pos][y_pos + 1] = 1
+			
+		print('Wolf ' + str(self.id) + ' '	+ str(x_pos) + ':' + str(y_pos) + 'moved: ' + str(move))
 	
 class GrassAgent(Agent):
 	def __init__(self, app, image, rule):
@@ -616,17 +641,23 @@ class SimpleTable(tk.Frame):
 		widget = self._widgets[row][column]
 		widget.configure(text=value)	
 	
+	def getFreePlaces(self):
+		places = []
+		for i in range(0, self.rows):
+			for j in range(0, self.columns):
+				if self._widgets[i][j].image == self.empty:
+					places.append((i, j))
+		return places
+	
 	def randomPlacement(self, image, counter, agent):
-		iterations = 1000
-		while (counter > 0 and iterations > 0):
-			iterations -= 1
-			randRow = randint(0, self.rows - 1)
-			randCol = randint(0, self.columns - 1)
-			if (self._widgets[randRow][randCol].image == self.empty):
-				self._widgets[randRow][randCol].configure(image = image)
-				self._widgets[randRow][randCol].image = image
-				self._widgets[randRow][randCol].agent = copy.copy(agent)
-				counter -= 1
+		empty = self.getFreePlaces()
+		while (counter > 0 and len(empty) > 0):
+			randPlace = randint(0, len(empty) - 1)
+			self._widgets[empty[randPlace][0]][empty[randPlace][1]].configure(image = image)
+			self._widgets[empty[randPlace][0]][empty[randPlace][1]].image = image
+			self._widgets[empty[randPlace][0]][empty[randPlace][1]].agent = copy.copy(agent)
+			empty.remove(empty[randPlace])
+			counter -= 1
 	
 	def reset(self, empty):
 		for i in range(0, self._rows):
