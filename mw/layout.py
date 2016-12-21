@@ -456,8 +456,17 @@ class App(object):
 			a2.clear()
 			a3.clear()
 			a.plot(x, y)
+			a.set_title("Number of rabbits per iteration step")
+			a.set_xlabel('Step no')
+			a.set_ylabel('Number of rabbits')
 			a2.plot(x, z)
+			a2.set_title("Amount of grass per iteration step")
+			a2.set_xlabel('Step no')
+			a2.set_ylabel('Amount of grass')
 			a3.plot(x, w)
+			a3.set_title("Number of wolfs per iteration step")
+			a3.set_xlabel('Step no')
+			a3.set_ylabel('Number of wolfs')
 			if k <= 100:
 				a.set_xlim([0, 100])
 				a2.set_xlim([0, 100])
@@ -550,16 +559,16 @@ class RabbitAgent(Agent):
 	def reproduce(self, plane, row, column, max_row, max_column, movedMatrix):
 		reproduce_set = []
 		if row <> 0:
-			if not plane.widgets[row - 1][column].image == self.rule.wolf and not plane.widgets[row - 1][column].image == self.rule.rabbit:
+			if not plane.widgets[row - 1][column].image == self.rule.wolf and not plane.widgets[row - 1][column].image == self.rule.rabbit and not plane.widgets[row - 1][column].image == self.rule.wolf_in_grass:
 				reproduce_set.append((row - 1, column))
 		if row <> max_row:
-			if not plane.widgets[row + 1][column].image == self.rule.wolf and not plane.widgets[row + 1][column].image == self.rule.rabbit:
+			if not plane.widgets[row + 1][column].image == self.rule.wolf and not plane.widgets[row + 1][column].image == self.rule.rabbit and not plane.widgets[row + 1][column].image == self.rule.wolf_in_grass:
 				reproduce_set.append((row + 1, column))
 		if column <> 0:
-			if not plane.widgets[row][column - 1].image == self.rule.wolf and not plane.widgets[row][column - 1].image == self.rule.rabbit:
+			if not plane.widgets[row][column - 1].image == self.rule.wolf and not plane.widgets[row][column - 1].image == self.rule.rabbit and not plane.widgets[row][column - 1].image == self.rule.wolf_in_grass:
 				reproduce_set.append((row, column - 1))			
 		if column <> max_column:
-			if not plane.widgets[row][column + 1].image == self.rule.wolf and not plane.widgets[row][column + 1].image == self.rule.rabbit:
+			if not plane.widgets[row][column + 1].image == self.rule.wolf and not plane.widgets[row][column + 1].image == self.rule.rabbit and not plane.widgets[row][column + 1].image == self.rule.wolf_in_grass:
 				reproduce_set.append((row, column + 1))
 		
 		if len(reproduce_set) == 0:
