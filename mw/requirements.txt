@@ -1,2 +1,4 @@
 matplotlib
 Pillow
+configparser
+numpy
