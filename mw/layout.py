@@ -748,9 +748,25 @@ class Agent(object):
 class RabbitAgent(Agent):
 	def __init__(self, app, image, rule):
 		super(RabbitAgent, self).__init__(image, rule)
-		self._energy = int(app._RabbitInitialEnergyEntry.get()) if app._RabbitInitialEnergyEntry.get() <> '' else 5
+		
+		rabbitMean = int(world.RabbitInitialEnergyEntryMean.get()) if world.RabbitInitialEnergyEntryMean.get() <> '' else 10
+		rabbitVariance = int(world.RabbitInitialEnergyEntryVariance.get()) if world.RabbitInitialEnergyEntryVariance.get() <> '' else 0
+		rabbitEnergy = round(random_number_generator(rabbitMean, rabbitVariance))
+		rabbitEnergy = 0 if rabbitEnergy < 0 else rabbitEnergy
+		
+		self._energy = rabbitEnergy
 		self._app = app
-		self.condition = int(app._birthdayRabbitThresholdEntry.get()) if app._birthdayRabbitThresholdEntry.get() <> '' else 10
+		
+		rabbitMean = int(world.birthdayRabbitThresholdEntryMean.get()) if world.birthdayRabbitThresholdEntryMean.get() <> '' else 10
+		rabbitVariance = int(world.birthdayRabbitThresholdEntryVariance.get()) if world.birthdayRabbitThresholdEntryVariance.get() <> '' else 0
+		rabbitThreshold = round(random_number_generator(rabbitMean, rabbitVariance))
+		rabbitThreshold = 0 if rabbitThreshold < 0 else rabbitThreshold
+		
+		self._condition = rabbitThreshold
+	
+	@property
+	def condition(self):
+		return self._condition
 	
 	@property
 	def app(self):
@@ -831,19 +847,35 @@ class WolfAgent(Agent):
 		super(WolfAgent, self).__init__(image, rule)
 		self._app = app
 		
-		wolfMean = int(world.WolfInitialEnergyEntryMean.get()) if world.WolfInitialEnergyEntryMean.get() <> '' else 5
+		wolfMean = int(world.WolfInitialEnergyEntryMean.get()) if world.WolfInitialEnergyEntryMean.get() <> '' else 10
 		wolfVariance = int(world.WolfInitialEnergyEntryVariance.get()) if world.WolfInitialEnergyEntryVariance.get() <> '' else 0
-		wolfNo = round(random_number_generator(wolfMean, wolfVariance))
-		wolfNo = 0 if wolfNo < 0 else wolfNo
+		wolfEnergy = round(random_number_generator(wolfMean, wolfVariance))
+		wolfEnergy = 0 if wolfEnergy < 0 else wolfEnergy
 		
-		self._energy = int(app._WolfInitialEnergyEntry.get()) if app._WolfInitialEnergyEntry.get() <> '' else 10
+		self._energy = wolfEnergy
+		
+		wolfMean = int(world.birthdayWolfThresholdEntryMean.get()) if world.birthdayWolfThresholdEntryMean.get() <> '' else 20
+		wolfVariance = int(world.birthdayWolfThresholdEntryVariance.get()) if world.birthdayWolfThresholdEntryVariance.get() <> '' else 0
+		wolfThreshold = round(random_number_generator(wolfMean, wolfVariance))
+		wolfThreshold = 0 if wolfThreshold < 0 else wolfThreshold
+		
+		self._condition = wolfThreshold
+		
+	@property
+	def condition(self):
+		return self._condition
 		
 	@property
 	def app(self):
 		return self._app
 		
 	def move(self, x_pos, y_pos, neighbourHood, max_x, max_y, plane, movedMatrix):
-		self._energy -= int(self.app._wolfMoveCostEntry.get()) if self.app._wolfMoveCostEntry.get() <> '' else 1
+		wolfMean = int(world.wolfMoveCostEntryMean.get()) if world.wolfMoveCostEntryMean.get() <> '' else 1
+		wolfVariance = int(world.wolfMoveCostEntryVariance.get()) if world.wolfMoveCostEntryVariance.get() <> '' else 0
+		wolfCost = round(random_number_generator(wolfMean, wolfVariance))
+		wolfCost = 0 if wolfCost < 0 else wolfCost
+		
+		self._energy -= wolfCost
 		moves = self.rule.moveSet(x_pos, y_pos, neighbourHood, max_x, max_y)
 		if self.die():
 			self.rule.removeAgent(plane, x_pos, y_pos)
@@ -898,11 +930,9 @@ class WolfAgent(Agent):
 		
 		rand = randint(0, len(reproduce_set) - 1)
 		
-		condition = int(app._birthdayWolfThresholdEntry.get()) if app._birthdayWolfThresholdEntry.get() <> '' else 20
-		
-		if (self.energy >= condition):
+		if (self.energy >= self.condition):
 			move_tuple = reproduce_set[rand]
-			self.addEnergy(-0.5 * condition)
+			self.addEnergy(-0.5 * self.condition)
 			plane.widgets[move_tuple[0]][move_tuple[1]].agent = WolfAgent(self.app, self.image, self.rule)
 			plane.widgets[move_tuple[0]][move_tuple[1]].image = self.rule.wolf
 			plane.widgets[move_tuple[0]][move_tuple[1]].configure(image = self.rule.wolf)
@@ -913,6 +943,13 @@ class GrassAgent(Agent):
 	def __init__(self, app, image, rule):
 		super(GrassAgent, self).__init__(image, None)
 		self._app = app
+		
+		grassMean = int(world.grassEnergyEntryMean.get()) if world.grassEnergyEntryMean.get() <> '' else 1
+		grassVariance = int(world.grassEnergyEntryVariance.get()) if world.grassEnergyEntryVariance.get() <> '' else 0
+		grassEnergy = round(random_number_generator(grassMean, grassVariance))
+		grassEnergy = 0 if grassEnergy < 0 else grassEnergy
+		
+		self._energy = grassEnergy
 	
 	@property
 	def app(self):
@@ -920,15 +957,13 @@ class GrassAgent(Agent):
 	
 	@property
 	def energy(self):
-		return int(self.app._grassEnergyEntry.get()) if self.app._grassEnergyEntry.get() <> '' else 1
+		return self._energy
 		
 	def move(self):
 		return None
 			
 class SimpleTable(tk.Frame):
 	def __init__(self, parent, empty, rows=10, columns=10):
-		# use black background so it "peeks through" to 
-		# form grid lines
 		tk.Frame.__init__(self, parent, background="black")
 		self._widgets = []
 		self._rows = rows
