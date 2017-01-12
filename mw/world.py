@@ -10,12 +10,16 @@ simulation_steps = 200
 number_of_simulations = 1
 
 simulation_stop = False
+simulation_pause = False
+simulation_resume = False
 sleep_time = 0
+wait_for_resume = 1
 
-x = None
-y = None
-z = None
-w = None
+step_no = None
+rabbit_no = None
+grass_no = None
+wolf_no = None
+simulation_step = 0
 
 app = None
 
@@ -39,6 +43,8 @@ wolfMoveCostEntryMean = None
 wolfMoveCostEntryVariance = None
 rabbitInitEntryMean = None
 rabbitInitEntryVariance = None
+grassInitEntryMean = None
+grassInitEntryVariance = None
 wolfInitEntryMean = None
 wolfInitEntryVariance = None
 grassEnergyEntryMean = None
