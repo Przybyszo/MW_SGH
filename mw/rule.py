@@ -1,130 +1,109 @@
-import world
-from agent import WolfAgent, RabbitAgent, GrassAgent
+"""This module specifies movement rules for a given agent."""
+
+import world as w
+from agent import GrassAgent
 
 class Rule(object):
-	LEFT = 0
-	RIGHT = 1
-	UP = 2
-	DOWN = 3
-	
-	WOLF = 1
-	RABBIT = 2
-	GRASS = 3
-	
-	POSSIBLE = 1
-	NOT_POSSIBLE = 2
-	COVER = 3
-	EAT = 4
-	
-	def __init__(self):
-		print(world.rabbit)
-		self._rabbit = world.rabbit
-		self._wolf = world.wolf
-		self._grass = world.grass
-		self._wolf_in_grass = world.wolf_in_grass
-		self._empty = world.empty
-		
-	@property
-	def empty(self):
-		return self._empty
-		
-	@property
-	def grass(self):
-		return self._grass
-		
-	@property
-	def wolf(self):
-		return self._wolf
-		
-	@property
-	def rabbit(self):
-		return self._rabbit
-		
-	@property
-	def wolf_in_grass(self):
-		return self._wolf_in_grass
-		
-	def moveSet(self, x_pos, y_pos, neighbourHood, max_x, max_y):
-		moveset = [self.POSSIBLE] * 4
-		if (x_pos == 0):
-			moveset[self.UP] = self.NOT_POSSIBLE
-		if (x_pos == max_x):
-			moveset[self.DOWN] = self.NOT_POSSIBLE
-		if (y_pos == 0):
-			moveset[self.LEFT] = self.NOT_POSSIBLE
-		if (y_pos == max_y):
-			moveset[self.RIGHT] = self.NOT_POSSIBLE
-		return moveset
-		
-	def performMove(self, plane, src_x ,src_y, dest_x, dest_y):
-		pass
-		
-	def removeAgent(self, plane, x, y):
-		plane.widgets[x][y].configure(image = self.empty)
-		plane.widgets[x][y].agent = None
-		plane.widgets[x][y].image = self.empty
+    """Container for the agent's movement boundaries"""
+    @staticmethod
+    def move_set(x_pos, y_pos, neighbourhood, max_x, max_y):
+        """Returns possible moveset of an agent."""
+        moveset = [w.POSSIBLE] * 4
+        if x_pos == 0:
+            moveset[w.UP] = w.NOT_POSSIBLE
+        if x_pos == max_x:
+            moveset[w.DOWN] = w.NOT_POSSIBLE
+        if y_pos == 0:
+            moveset[w.LEFT] = w.NOT_POSSIBLE
+        if y_pos == max_y:
+            moveset[w.RIGHT] = w.NOT_POSSIBLE
+        return moveset
+
+    @staticmethod
+    def perform_move(app, plane, src_x, src_y, dest_x, dest_y):
+        """Performs move of an agent on a table."""
+        pass
+
+    @staticmethod
+    def remove_agent(plane, x_coord, y_coord):
+        """Removes agent from given position in a table."""
+        plane.widgets[x_coord][y_coord].configure(image=w.EMPTY)
+        plane.widgets[x_coord][y_coord].agent = None
+        plane.widgets[x_coord][y_coord].image = w.EMPTY
 
 class WolfRule(Rule):
-	def moveSet(self, x_pos, y_pos, neighbourHood, max_x, max_y):
-		moveset = super(WolfRule, self).moveSet(x_pos, y_pos, neighbourHood, max_x, max_y)
-		for i in range(self.LEFT, self.DOWN + 1):
-			if neighbourHood[i] == self.wolf:
-				moveset[i] == self.NOT_POSSIBLE		
-		return moveset
-	
-	def performMove(self, app, plane, src_x, src_y, dest_x, dest_y):
-		if plane.widgets[dest_x][dest_y].image == self.empty or plane.widgets[dest_x][dest_y].image == self.rabbit:	
-			if plane.widgets[src_x][src_y].image == self.wolf_in_grass:
-				plane.widgets[dest_x][dest_y].agent = plane.widgets[src_x][src_y].agent
-				plane.widgets[dest_x][dest_y].image = self.wolf
-				plane.widgets[dest_x][dest_y].configure(image = self.wolf)
-				plane.widgets[src_x][src_y].configure(image = self.grass)
-				plane.widgets[src_x][src_y].agent = GrassAgent(app, self.grass, None)
-				plane.widgets[src_x][src_y].image = self.grass			
-			else:
-				plane.widgets[dest_x][dest_y].agent = plane.widgets[src_x][src_y].agent
-				plane.widgets[dest_x][dest_y].image = plane.widgets[src_x][src_y].image
-				plane.widgets[dest_x][dest_y].configure(image = plane.widgets[src_x][src_y].image)
-				plane.widgets[src_x][src_y].configure(image = self.empty)
-				plane.widgets[src_x][src_y].agent = None
-				plane.widgets[src_x][src_y].image = self.empty
-		elif plane.widgets[dest_x][dest_y].image == self.grass:
-			if plane.widgets[src_x][src_y].image == self.wolf_in_grass:
-				plane.widgets[dest_x][dest_y].agent = plane.widgets[src_x][src_y].agent
-				plane.widgets[dest_x][dest_y].image = self.wolf_in_grass
-				plane.widgets[dest_x][dest_y].configure(image = self.wolf_in_grass)
-				plane.widgets[src_x][src_y].configure(image = self.grass)
-				plane.widgets[src_x][src_y].agent = GrassAgent(app, self.grass, None)
-				plane.widgets[src_x][src_y].image = self.grass					
-			else:
-				plane.widgets[dest_x][dest_y].agent = plane.widgets[src_x][src_y].agent
-				plane.widgets[dest_x][dest_y].image = self.wolf_in_grass
-				plane.widgets[dest_x][dest_y].configure(image = self.wolf_in_grass)
-				plane.widgets[src_x][src_y].configure(image = self.empty)
-				plane.widgets[src_x][src_y].agent = None
-				plane.widgets[src_x][src_y].image = self.empty
-		
-class RabbitRule(Rule):	
-	def moveSet(self, x_pos, y_pos, neighbourHood, max_x, max_y):
-		moveset = super(RabbitRule, self).moveSet(x_pos, y_pos, neighbourHood, max_x, max_y)
-		for i in range(self.LEFT, self.DOWN + 1):
-			if neighbourHood[i] == self.rabbit or neighbourHood[i] == self.wolf:
-				moveset[i] == self.NOT_POSSIBLE		
-		return moveset
-	
-	def performMove(self, plane, src_x, src_y, dest_x, dest_y):
-		if plane.widgets[dest_x][dest_y].image == self.empty:
-			plane.widgets[dest_x][dest_y].agent = plane.widgets[src_x][src_y].agent
-			plane.widgets[dest_x][dest_y].image = plane.widgets[src_x][src_y].image
-			plane.widgets[dest_x][dest_y].configure(image = plane.widgets[src_x][src_y].image)
-			plane.widgets[src_x][src_y].configure(image = self.empty)
-			plane.widgets[src_x][src_y].agent = None
-			plane.widgets[src_x][src_y].image = self.empty
-		if plane.widgets[dest_x][dest_y].image == self.grass:
-			plane.widgets[src_x][src_y].agent.addEnergy(plane.widgets[dest_x][dest_y].agent.energy)
-			plane.widgets[dest_x][dest_y].agent = plane.widgets[src_x][src_y].agent
-			plane.widgets[dest_x][dest_y].image = plane.widgets[src_x][src_y].image
-			plane.widgets[dest_x][dest_y].configure(image = plane.widgets[src_x][src_y].image)
-			plane.widgets[src_x][src_y].configure(image = self.empty)
-			plane.widgets[src_x][src_y].agent = None
-			plane.widgets[src_x][src_y].image = self.empty
+    """Container for the wolf's movement boundaries"""
+    def move_set(self, x_pos, y_pos, neighbourhood, max_x, max_y):
+        """Returns possible moveset of an agent."""
+        moveset = super(WolfRule, self).move_set(x_pos, y_pos, neighbourhood, max_x, max_y)
+        for i in range(w.LEFT, w.DOWN + 1):
+            if neighbourhood[i] == w.WOLF:
+                moveset[i] == w.NOT_POSSIBLE
+        return moveset
+
+    @staticmethod
+    def perform_move(app, plane, src_x, src_y, dest_x, dest_y):
+        """Performs move of an agent on a table."""
+        if (plane.widgets[dest_x][dest_y].image == w.EMPTY or
+                plane.widgets[dest_x][dest_y].image == w.RABBIT):
+            if plane.widgets[dest_x][dest_y].image == w.RABBIT:
+                energy_to_be_added = plane.widgets[dest_x][dest_y].agent.energy
+                plane.widgets[src_x][src_y].agent.add_energy(energy_to_be_added)
+            if plane.widgets[src_x][src_y].image == w.WOLF_IN_GRASS:
+                plane.widgets[dest_x][dest_y].agent = plane.widgets[src_x][src_y].agent
+                plane.widgets[dest_x][dest_y].image = w.WOLF
+                plane.widgets[dest_x][dest_y].configure(image=w.WOLF)
+                plane.widgets[src_x][src_y].configure(image=w.GRASS)
+                plane.widgets[src_x][src_y].agent = GrassAgent(app, w.GRASS, None)
+                plane.widgets[src_x][src_y].image = w.GRASS
+            else:
+                plane.widgets[dest_x][dest_y].agent = plane.widgets[src_x][src_y].agent
+                plane.widgets[dest_x][dest_y].image = plane.widgets[src_x][src_y].image
+                plane.widgets[dest_x][dest_y].configure(image=plane.widgets[src_x][src_y].image)
+                plane.widgets[src_x][src_y].configure(image=w.EMPTY)
+                plane.widgets[src_x][src_y].agent = None
+                plane.widgets[src_x][src_y].image = w.EMPTY
+        elif plane.widgets[dest_x][dest_y].image == w.GRASS:
+            if plane.widgets[src_x][src_y].image == w.WOLF_IN_GRASS:
+                plane.widgets[dest_x][dest_y].agent = plane.widgets[src_x][src_y].agent
+                plane.widgets[dest_x][dest_y].image = w.WOLF_IN_GRASS
+                plane.widgets[dest_x][dest_y].configure(image=w.WOLF_IN_GRASS)
+                plane.widgets[src_x][src_y].configure(image=w.GRASS)
+                plane.widgets[src_x][src_y].agent = GrassAgent(app, w.GRASS, None)
+                plane.widgets[src_x][src_y].image = w.GRASS
+            else:
+                plane.widgets[dest_x][dest_y].agent = plane.widgets[src_x][src_y].agent
+                plane.widgets[dest_x][dest_y].image = w.WOLF_IN_GRASS
+                plane.widgets[dest_x][dest_y].configure(image=w.WOLF_IN_GRASS)
+                plane.widgets[src_x][src_y].configure(image=w.EMPTY)
+                plane.widgets[src_x][src_y].agent = None
+                plane.widgets[src_x][src_y].image = w.EMPTY
+
+class RabbitRule(Rule):
+    """Container for the rabbit's movement boundaries"""
+    def move_set(self, x_pos, y_pos, neighbourhood, max_x, max_y):
+        """Returns possible moveset of an agent."""
+        moveset = super(RabbitRule, self).move_set(x_pos, y_pos, neighbourhood, max_x, max_y)
+        for i in range(w.LEFT, w.DOWN + 1):
+            if neighbourhood[i] == w.RABBIT or neighbourhood[i] == w.WOLF:
+                moveset[i] == w.NOT_POSSIBLE
+        return moveset
+
+    @staticmethod
+    def perform_move(app, plane, src_x, src_y, dest_x, dest_y):
+        """Performs move of an agent on a table."""
+        if plane.widgets[dest_x][dest_y].image == w.EMPTY:
+            plane.widgets[dest_x][dest_y].agent = plane.widgets[src_x][src_y].agent
+            plane.widgets[dest_x][dest_y].image = plane.widgets[src_x][src_y].image
+            plane.widgets[dest_x][dest_y].configure(image=plane.widgets[src_x][src_y].image)
+            plane.widgets[src_x][src_y].configure(image=w.EMPTY)
+            plane.widgets[src_x][src_y].agent = None
+            plane.widgets[src_x][src_y].image = w.EMPTY
+        if plane.widgets[dest_x][dest_y].image == w.GRASS:
+            plane.widgets[src_x][src_y].agent.add_energy(plane.widgets[dest_x][dest_y].agent.energy)
+            plane.widgets[dest_x][dest_y].agent = plane.widgets[src_x][src_y].agent
+            plane.widgets[dest_x][dest_y].image = plane.widgets[src_x][src_y].image
+            plane.widgets[dest_x][dest_y].configure(image=plane.widgets[src_x][src_y].image)
+            plane.widgets[src_x][src_y].configure(image=w.EMPTY)
+            plane.widgets[src_x][src_y].agent = None
+            plane.widgets[src_x][src_y].image = w.EMPTY

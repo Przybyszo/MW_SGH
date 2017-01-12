@@ -1,61 +1,60 @@
-rabbit = None
-wolf = None
-wolf_in_grass = None
-grass = None
-empty = None
+"""Package holding global variables used in application."""
 
-distribution = None
+RABBIT = None
+WOLF = None
+WOLF_IN_GRASS = None
+GRASS = None
+EMPTY = None
 
-simulation_steps = 200
-number_of_simulations = 1
+DISTRIBUTION = None
 
-simulation_stop = False
-simulation_pause = False
-simulation_resume = False
-sleep_time = 0
-wait_for_resume = 1
+SIMULATION_STEPS = 200
 
-step_no = None
-rabbit_no = None
-grass_no = None
-wolf_no = None
-simulation_step = 0
+SIMULATION_STOP = False
+SIMULATION_PAUSE = False
+SIMULATION_RESUME = False
+SLEEP_TIME = 0
+WAIT_FOR_RESUME = 1
 
-app = None
+STEP_NO = None
+RABBIT_NO = None
+GRASS_NO = None
+WOLF_NO = None
+SIMULATION_STEP = 0
+
+APP = None
 
 LEFT = 0
 RIGHT = 1
 UP = 2
 DOWN = 3
-	
+
 WOLF = 1
 RABBIT = 2
 GRASS = 3
-	
+
 POSSIBLE = 1
 NOT_POSSIBLE = 2
-COVER = 3
-EAT = 4
 
-stepsEntry = None
+STEPS_ENTRY = None
 
-wolfMoveCostEntryMean = None
-wolfMoveCostEntryVariance = None
-rabbitInitEntryMean = None
-rabbitInitEntryVariance = None
-grassInitEntryMean = None
-grassInitEntryVariance = None
-wolfInitEntryMean = None
-wolfInitEntryVariance = None
-grassEnergyEntryMean = None
-grassEnergyEntryVariance = None
-birthdayWolfThresholdEntryMean = None
-birthdayWolfThresholdEntryVariance = None
-birthdayRabbitThresholdEntryMean = None
-birthdayRabbitThresholdEntryVariance = None
-WolfInitialEnergyEntryMean = None
-WolfInitialEnergyEntryVariance = None
-RabbitInitialEnergyEntryMean = None
-RabbitInitialEnergyEntryVariance = None
-rabbitMoveCostEntryMean = None
-rabbitMoveCostEntryVariance = None
+WOLF_MOVE_COST_ENTRY_MEAN = None
+WOLF_MOVE_COST_ENTRY_VARIANCE = None
+RABBIT_INIT_ENTRY_MEAN = None
+RABBIT_INIT_ENTRY_VARIANCE = None
+GRASS_INIT_ENTRY_MEAN = None
+GRASS_INIT_ENTRY_VARIANCE = None
+WOLF_INIT_ENTRY_MEAN = None
+WOLF_INIT_ENTRY_VARIANCE = None
+GRASS_ENERGY_ENTRY_MEAN = None
+GRASS_ENERGY_ENTRY_VARIANCE = None
+BIRTHDAY_WOLF_ENTRY_MEAN = None
+BIRTHDAY_WOLF_ENTRY_VARIANCE = None
+BIRTHDAY_RABBIT_ENTRY_MEAN = None
+BIRTHDAY_RABBIT_ENTRY_VARIANCE = None
+WOLF_ENERGY_ENTRY_MEAN = None
+WOLF_ENERGY_ENTRY_VARIANCE = None
+RABBIT_ENERGY_ENTRY_MEAN = None
+RABBIT_ENERGY_ENTRY_VARIANCE = None
+RABBIT_MOVE_COST_ENTRY_MEAN = None
+RABBIT_MOVE_COST_ENTRY_VARIANCE = None
