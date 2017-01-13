@@ -71,7 +71,7 @@ class RabbitAgent(Agent):
         else:
             rabbit_variance = 0
 
-        rabbit_energy = round(random_number_generator(rabbit_mean, rabbit_variance))
+        rabbit_energy = random_number_generator(rabbit_mean, rabbit_variance)
         rabbit_energy = 0 if rabbit_energy < 0 else rabbit_energy
 
         self._energy = rabbit_energy
@@ -87,7 +87,7 @@ class RabbitAgent(Agent):
         else:
             rabbit_variance = 0
 
-        rabbit_threshold = round(random_number_generator(rabbit_mean, rabbit_variance))
+        rabbit_threshold = random_number_generator(rabbit_mean, rabbit_variance)
         rabbit_threshold = 0 if rabbit_threshold < 0 else rabbit_threshold
 
         self._condition = rabbit_threshold
@@ -156,7 +156,7 @@ class RabbitAgent(Agent):
         else:
             move_energy_variance = 0
 
-        move_energy = round(random_number_generator(move_energy_mean, move_energy_variance))
+        move_energy = random_number_generator(move_energy_mean, move_energy_variance)
         move_energy = 0 if move_energy < 0 else move_energy
 
         self._energy -= move_energy
@@ -213,7 +213,7 @@ class WolfAgent(Agent):
         else:
             wolf_variance = 0
 
-        wolf_energy = round(random_number_generator(wolf_mean, wolf_variance))
+        wolf_energy = random_number_generator(wolf_mean, wolf_variance)
         wolf_energy = 0 if wolf_energy < 0 else wolf_energy
 
         self._energy = wolf_energy
@@ -228,7 +228,7 @@ class WolfAgent(Agent):
         else:
             wolf_variance = 0
 
-        wolf_threshold = round(random_number_generator(wolf_mean, wolf_variance))
+        wolf_threshold = random_number_generator(wolf_mean, wolf_variance)
         wolf_threshold = 0 if wolf_threshold < 0 else wolf_threshold
 
         self._condition = wolf_threshold
@@ -255,7 +255,7 @@ class WolfAgent(Agent):
         else:
             move_energy_variance = 0
 
-        move_energy = round(random_number_generator(move_energy_mean, move_energy_variance))
+        move_energy = random_number_generator(move_energy_mean, move_energy_variance)
         move_energy = 0 if move_energy < 0 else move_energy
 
         self._energy -= move_energy
@@ -347,7 +347,7 @@ class GrassAgent(Agent):
         else:
             grass_variance = 0
 
-        grass_energy = round(random_number_generator(grass_mean, grass_variance))
+        grass_energy = random_number_generator(grass_mean, grass_variance)
         grass_energy = 0 if grass_energy < 0 else grass_energy
 
         self._energy = grass_energy
