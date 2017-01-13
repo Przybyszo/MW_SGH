@@ -362,7 +362,7 @@ class App(object):
             grass_no = [self.countAgents(table, w.GRASS, w.WOLF_IN_GRASS)]
             wolf_no = [self.countAgents(table, w.WOLF, w.WOLF_IN_GRASS)]
 
-        for k in range(start, float(w.STEPS_ENTRY.get()) if w.STEPS_ENTRY.get() <> '' else 200):
+        for k in range(start, int(w.STEPS_ENTRY.get()) if w.STEPS_ENTRY.get() <> '' else 200):
             if w.SIMULATION_PAUSE:
                 w.SIMULATION_PAUSE = False
                 w.STEP_NO = step_no
