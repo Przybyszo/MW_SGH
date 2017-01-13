@@ -7,9 +7,9 @@ from random import randint
 from os import getcwd
 from configparser import ConfigParser
 from PIL import ImageTk, Image
-import matplotlib
 import world as w
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+import matplotlib
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 from rule import RabbitRule, WolfRule
 from agent import WolfAgent, RabbitAgent, GrassAgent
@@ -100,7 +100,7 @@ class App(object):
         w.EMPTY = empty
 
     @staticmethod
-    def put_entry_option(master, left_side, text):
+    def put_entry(master, left_side, text):
         """Adds a new entry box in a frame"""
         box = tk.Frame(master, bd=1, relief='sunken')
         box.pack(in_=left_side, fill='x')
@@ -179,45 +179,45 @@ class App(object):
         self.button_resume = button_resume
 
         txt_label = "Enter initial number of rabbits"
-        w.RABBIT_INIT_ENTRY_MEAN, w.RABBIT_INIT_ENTRY_VARIANCE = self.put_entry_option(master,
-                                                                                       left_side,
-                                                                                       txt_label)
+        w.RABBIT_INIT_ENTRY_MEAN, w.RABBIT_INIT_ENTRY_VARIANCE = self.put_entry(master,
+                                                                                left_side,
+                                                                                txt_label)
         txt_label = "Enter initial number of wolfs"
-        w.WOLF_INIT_ENTRY_MEAN, w.WOLF_INIT_ENTRY_VARIANCE = self.put_entry_option(master,
-                                                                                   left_side,
-                                                                                   txt_label)
+        w.WOLF_INIT_ENTRY_MEAN, w.WOLF_INIT_ENTRY_VARIANCE = self.put_entry(master,
+                                                                            left_side,
+                                                                            txt_label)
         txt_label = "Enter grass growing rate per step"
-        w.GRASS_INIT_ENTRY_MEAN, w.GRASS_INIT_ENTRY_VARIANCE = self.put_entry_option(master,
-                                                                                     left_side,
-                                                                                     txt_label)
+        w.GRASS_INIT_ENTRY_MEAN, w.GRASS_INIT_ENTRY_VARIANCE = self.put_entry(master,
+                                                                              left_side,
+                                                                              txt_label)
         txt_label = "Enter the rabbit birthday energy threshold"
-        w.BIRTHDAY_RABBIT_ENTRY_MEAN, w.BIRTHDAY_RABBIT_ENTRY_VARIANCE = self.put_entry_option(master,
-                                                                                               left_side,
-                                                                                               txt_label)
+        w.BIRTHDAY_RABBIT_ENTRY_MEAN, w.BIRTHDAY_RABBIT_ENTRY_VARIANCE = self.put_entry(master,
+                                                                                        left_side,
+                                                                                        txt_label)
         txt_label = "Enter rabbit energy cost for movement"
-        w.RABBIT_MOVE_COST_ENTRY_MEAN, w.RABBIT_MOVE_COST_ENTRY_VARIANCE = self.put_entry_option(master,
-                                                                                                 left_side,
-                                                                                                 txt_label)
+        w.RABBIT_MOVE_COST_ENTRY_MEAN, w.RABBIT_MOVE_COST_ENTRY_VARIANCE = self.put_entry(master,
+                                                                                          left_side,
+                                                                                          txt_label)
         txt_label = "Enter the rabbit initial energy"
-        w.RABBIT_ENERGY_ENTRY_MEAN, w.RABBIT_ENERGY_ENTRY_VARIANCE = self.put_entry_option(master,
-                                                                                           left_side,
-                                                                                           txt_label)
+        w.RABBIT_ENERGY_ENTRY_MEAN, w.RABBIT_ENERGY_ENTRY_VARIANCE = self.put_entry(master,
+                                                                                    left_side,
+                                                                                    txt_label)
         txt_label = "Enter grass energy boost"
-        w.GRASS_ENERGY_ENTRY_MEAN, w.GRASS_ENERGY_ENTRY_VARIANCE = self.put_entry_option(master,
-                                                                                   left_side,
-                                                                                   txt_label)
+        w.GRASS_ENERGY_ENTRY_MEAN, w.GRASS_ENERGY_ENTRY_VARIANCE = self.put_entry(master,
+                                                                                  left_side,
+                                                                                  txt_label)
         txt_label = "Enter initial wolf energy"
-        w.WOLF_ENERGY_ENTRY_MEAN, w.WOLF_ENERGY_ENTRY_VARIANCE = self.put_entry_option(master,
-                                                                                       left_side,
-                                                                                       txt_label)
+        w.WOLF_ENERGY_ENTRY_MEAN, w.WOLF_ENERGY_ENTRY_VARIANCE = self.put_entry(master,
+                                                                                left_side,
+                                                                                txt_label)
         txt_label = "Enter the wolf birthday energy threshold"
-        w.BIRTHDAY_WOLF_ENTRY_MEAN, w.BIRTHDAY_WOLF_ENTRY_VARIANCE = self.put_entry_option(master,
-                                                                                           left_side,
-                                                                                           txt_label)
+        w.BIRTHDAY_WOLF_ENTRY_MEAN, w.BIRTHDAY_WOLF_ENTRY_VARIANCE = self.put_entry(master,
+                                                                                    left_side,
+                                                                                    txt_label)
         txt_label = "Enter wolf energy cost for movement"
-        w.WOLF_MOVE_COST_ENTRY_MEAN, w.WOLF_MOVE_COST_ENTRY_VARIANCE = self.put_entry_option(master,
-                                                                                             left_side,
-                                                                                             txt_label)
+        w.WOLF_MOVE_COST_ENTRY_MEAN, w.WOLF_MOVE_COST_ENTRY_VARIANCE = self.put_entry(master,
+                                                                                      left_side,
+                                                                                      txt_label)
 
         up_left_step_space = tk.Frame(master, bd=1, relief='sunken')
         up_left_step_space.pack(in_=left_side, fill='x')
@@ -293,41 +293,41 @@ class App(object):
         if w.RABBIT_INIT_ENTRY_MEAN.get() <> '':
             rabbit_mean = float(w.RABBIT_INIT_ENTRY_MEAN.get())
         else:
-            rabbit_mean = 5
+            rabbit_mean = 5.0
 
         if w.RABBIT_INIT_ENTRY_VARIANCE.get() <> '':
             rabbit_variance = float(w.RABBIT_INIT_ENTRY_VARIANCE.get())
         else:
-            rabbit_variance = 0
+            rabbit_variance = 0.0
 
         rabbit_no = round(random_number_generator(rabbit_mean, rabbit_variance))
-        rabbit_no = 0 if rabbit_no < 0 else rabbit_no
+        rabbit_no = 0.0 if rabbit_no < 0 else rabbit_no
 
         if w.WOLF_INIT_ENTRY_MEAN.get() <> '':
             wolf_mean = float(w.WOLF_INIT_ENTRY_MEAN.get())
         else:
-            wolf_mean = 5
+            wolf_mean = 5.0
 
         if w.WOLF_INIT_ENTRY_VARIANCE.get() <> '':
             wolf_variance = float(w.WOLF_INIT_ENTRY_VARIANCE.get())
         else:
-            wolf_variance = 0
+            wolf_variance = 0.0
 
         wolf_no = round(random_number_generator(wolf_mean, wolf_variance))
-        wolf_no = 0 if wolf_no < 0 else wolf_no
+        wolf_no = 0.0 if wolf_no < 0 else wolf_no
 
         if w.GRASS_INIT_ENTRY_MEAN.get() <> '':
             grass_mean = float(w.GRASS_INIT_ENTRY_MEAN.get())
         else:
-            grass_mean = 5
+            grass_mean = 5.0
 
         if w.GRASS_INIT_ENTRY_VARIANCE.get() <> '':
             grass_variance = float(w.GRASS_INIT_ENTRY_VARIANCE.get())
         else:
-            grass_variance = 0
+            grass_variance = 0.0
 
         grass_no = round(random_number_generator(grass_mean, grass_variance))
-        grass_no = 0 if grass_no < 0 else grass_no
+        grass_no = 0.0 if grass_no < 0 else grass_no
 
         table.randomPlacement(w.RABBIT, rabbit_no)
         table.randomPlacement(w.WOLF, wolf_no)
@@ -345,9 +345,9 @@ class App(object):
         self.button_end['state'] = 'active'
         self.button_pause['state'] = 'active'
         step_no = [0]
-        rabbit_no = [self.countAgents(table, w.RABBIT)]
-        grass_no = [self.countAgents(table, w.GRASS, w.WOLF_IN_GRASS)]
-        wolf_no = [self.countAgents(table, w.WOLF, w.WOLF_IN_GRASS)]
+        rabbit_no = [self.count_agents(table, w.RABBIT)]
+        grass_no = [self.count_agents(table, w.GRASS, w.WOLF_IN_GRASS)]
+        wolf_no = [self.count_agents(table, w.WOLF, w.WOLF_IN_GRASS)]
 
         if w.SIMULATION_RESUME:
             step_no = w.STEP_NO
@@ -358,9 +358,9 @@ class App(object):
         else:
             start = 0
             step_no = [start]
-            rabbit_no = [self.countAgents(table, w.RABBIT)]
-            grass_no = [self.countAgents(table, w.GRASS, w.WOLF_IN_GRASS)]
-            wolf_no = [self.countAgents(table, w.WOLF, w.WOLF_IN_GRASS)]
+            rabbit_no = [self.count_agents(table, w.RABBIT)]
+            grass_no = [self.count_agents(table, w.GRASS, w.WOLF_IN_GRASS)]
+            wolf_no = [self.count_agents(table, w.WOLF, w.WOLF_IN_GRASS)]
 
         for k in range(start, int(w.STEPS_ENTRY.get()) if w.STEPS_ENTRY.get() <> '' else 200):
             if w.SIMULATION_PAUSE:
@@ -374,7 +374,7 @@ class App(object):
             if w.SIMULATION_STOP:
                 w.SIMULATION_STOP = False
                 return
-            moved_matrix = [[0 for m in range(0, len(table.widgets[n]))]
+            moved_matrix = [[range(0, len(table.widgets[n]))]
                             for n in range(0, len(table.widgets))]
             for i in range(0, len(table.widgets)):
                 for j in range(0, len(table.widgets[i])):
@@ -397,9 +397,9 @@ class App(object):
                                                            table, moved_matrix)
 
             step_no.append(k + 1)
-            rabbit_no.append(self.countAgents(table, w.RABBIT))
-            grass_no.append(self.countAgents(table, w.GRASS, w.WOLF_IN_GRASS))
-            wolf_no.append(self.countAgents(table, w.WOLF, w.WOLF_IN_GRASS))
+            rabbit_no.append(self.count_agents(table, w.RABBIT))
+            grass_no.append(self.count_agents(table, w.GRASS, w.WOLF_IN_GRASS))
+            wolf_no.append(self.count_agents(table, w.WOLF, w.WOLF_IN_GRASS))
 
             self.redraw_plot(step_no, rabbit_no, self.rabbit_plot, self.rabbit_canvas, k,
                              "Number of rabbits per iteration step", table)
@@ -413,15 +413,15 @@ class App(object):
             if w.GRASS_INIT_ENTRY_MEAN.get() <> '':
                 grass_mean = float(w.GRASS_INIT_ENTRY_MEAN.get())
             else:
-                grass_mean = 5
+                grass_mean = 5.0
 
             if w.GRASS_INIT_ENTRY_VARIANCE.get() <> '':
                 grass_variance = float(w.GRASS_INIT_ENTRY_VARIANCE.get())
             else:
-                grass_variance = 0
+                grass_variance = 0.0
 
             grass_add_no = round(random_number_generator(grass_mean, grass_variance))
-            grass_add_no = 0 if grass_add_no < 0 else grass_add_no
+            grass_add_no = 0.0 if grass_add_no < 0 else grass_add_no
 
             table.randomPlacement(w.GRASS, grass_add_no)
             self.master.update()
@@ -442,7 +442,7 @@ class App(object):
         canvas.draw()
 
     @staticmethod
-    def countAgents(table, *args):
+    def count_agents(table, *args):
         """Count the number of given agent type, that are currently in the simulation."""
         counter = 0
         for i in range(0, len(table.widgets)):
@@ -455,6 +455,7 @@ class App(object):
 
 
 class SimpleTable(tk.Frame):
+    """Table that holds positions of agents in a given simulation."""
     def __init__(self, parent, rows=10, columns=10):
         tk.Frame.__init__(self, parent, background="black")
         self._widgets = []

@@ -64,15 +64,15 @@ class RabbitAgent(Agent):
         if w.RABBIT_ENERGY_ENTRY_MEAN.get() <> '':
             rabbit_mean = float(w.RABBIT_ENERGY_ENTRY_MEAN.get())
         else:
-            rabbit_mean = 5
+            rabbit_mean = 5.0
 
         if w.RABBIT_ENERGY_ENTRY_VARIANCE.get() <> '':
             rabbit_variance = float(w.RABBIT_ENERGY_ENTRY_VARIANCE.get())
         else:
-            rabbit_variance = 0
+            rabbit_variance = 0.0
 
         rabbit_energy = random_number_generator(rabbit_mean, rabbit_variance)
-        rabbit_energy = 0 if rabbit_energy < 0 else rabbit_energy
+        rabbit_energy = 0.0 if rabbit_energy < 0 else rabbit_energy
 
         self._energy = rabbit_energy
         self._app = app
@@ -80,15 +80,15 @@ class RabbitAgent(Agent):
         if w.BIRTHDAY_RABBIT_ENTRY_MEAN.get() <> '':
             rabbit_mean = float(w.BIRTHDAY_RABBIT_ENTRY_MEAN.get())
         else:
-            rabbit_mean = 10
+            rabbit_mean = 10.0
 
         if w.BIRTHDAY_RABBIT_ENTRY_VARIANCE.get() <> '':
             rabbit_variance = float(w.BIRTHDAY_RABBIT_ENTRY_VARIANCE.get())
         else:
-            rabbit_variance = 0
+            rabbit_variance = 0.0
 
         rabbit_threshold = random_number_generator(rabbit_mean, rabbit_variance)
-        rabbit_threshold = 0 if rabbit_threshold < 0 else rabbit_threshold
+        rabbit_threshold = 0.0 if rabbit_threshold < 0 else rabbit_threshold
 
         self._condition = rabbit_threshold
 
@@ -154,10 +154,10 @@ class RabbitAgent(Agent):
         if w.RABBIT_MOVE_COST_ENTRY_VARIANCE.get() <> '':
             move_energy_variance = float(w.RABBIT_MOVE_COST_ENTRY_VARIANCE.get())
         else:
-            move_energy_variance = 0
+            move_energy_variance = 0.0
 
         move_energy = random_number_generator(move_energy_mean, move_energy_variance)
-        move_energy = 0 if move_energy < 0 else move_energy
+        move_energy = 0.0 if move_energy < 0 else move_energy
 
         self._energy -= move_energy
         moves = self.rule.move_set(x_pos, y_pos, neighbourhood, max_x, max_y)
@@ -206,30 +206,30 @@ class WolfAgent(Agent):
         if w.WOLF_ENERGY_ENTRY_MEAN.get() <> '':
             wolf_mean = float(w.WOLF_ENERGY_ENTRY_MEAN.get())
         else:
-            wolf_mean = 10
+            wolf_mean = 10.0
 
         if w.WOLF_ENERGY_ENTRY_VARIANCE.get() <> '':
             wolf_variance = float(w.WOLF_ENERGY_ENTRY_VARIANCE.get())
         else:
-            wolf_variance = 0
+            wolf_variance = 0.0
 
         wolf_energy = random_number_generator(wolf_mean, wolf_variance)
-        wolf_energy = 0 if wolf_energy < 0 else wolf_energy
+        wolf_energy = 0.0 if wolf_energy < 0 else wolf_energy
 
         self._energy = wolf_energy
 
         if w.BIRTHDAY_WOLF_ENTRY_MEAN.get() <> '':
             wolf_mean = float(w.BIRTHDAY_WOLF_ENTRY_MEAN.get())
         else:
-            wolf_mean = 20
+            wolf_mean = 20.0
 
         if w.BIRTHDAY_WOLF_ENTRY_VARIANCE.get() <> '':
             wolf_variance = float(w.BIRTHDAY_WOLF_ENTRY_VARIANCE.get())
         else:
-            wolf_variance = 0
+            wolf_variance = 0.0
 
         wolf_threshold = random_number_generator(wolf_mean, wolf_variance)
-        wolf_threshold = 0 if wolf_threshold < 0 else wolf_threshold
+        wolf_threshold = 0.0 if wolf_threshold < 0 else wolf_threshold
 
         self._condition = wolf_threshold
 
@@ -253,10 +253,10 @@ class WolfAgent(Agent):
         if w.WOLF_MOVE_COST_ENTRY_VARIANCE.get() <> '':
             move_energy_variance = float(w.WOLF_MOVE_COST_ENTRY_VARIANCE.get())
         else:
-            move_energy_variance = 0
+            move_energy_variance = 0.0
 
         move_energy = random_number_generator(move_energy_mean, move_energy_variance)
-        move_energy = 0 if move_energy < 0 else move_energy
+        move_energy = 0.0 if move_energy < 0 else move_energy
 
         self._energy -= move_energy
         moves = self.rule.move_set(x_pos, y_pos, neighbourhood, max_x, max_y)
@@ -340,15 +340,15 @@ class GrassAgent(Agent):
         if w.GRASS_ENERGY_ENTRY_MEAN.get() <> '':
             grass_mean = float(w.GRASS_ENERGY_ENTRY_MEAN.get())
         else:
-            grass_mean = 1
+            grass_mean = 1.0
 
         if w.GRASS_ENERGY_ENTRY_VARIANCE.get() <> '':
             grass_variance = float(w.GRASS_ENERGY_ENTRY_VARIANCE.get())
         else:
-            grass_variance = 0
+            grass_variance = 0.0
 
         grass_energy = random_number_generator(grass_mean, grass_variance)
-        grass_energy = 0 if grass_energy < 0 else grass_energy
+        grass_energy = 0.0 if grass_energy < 0 else grass_energy
 
         self._energy = grass_energy
 
