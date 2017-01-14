@@ -289,6 +289,9 @@ class App(object):
         """Initializes the table with agents."""
         self.button_start['state'] = 'active'
         table.reset(w.EMPTY)
+        w.SIMULATION_PAUSE = False
+        w.SIMULATION_STOP = False
+        w.SIMULATION_RESUME = False
 
         if w.RABBIT_INIT_ENTRY_MEAN.get() <> '':
             rabbit_mean = float(w.RABBIT_INIT_ENTRY_MEAN.get())
@@ -361,7 +364,6 @@ class App(object):
             rabbit_no = [self.count_agents(table, w.RABBIT)]
             grass_no = [self.count_agents(table, w.GRASS, w.WOLF_IN_GRASS)]
             wolf_no = [self.count_agents(table, w.WOLF, w.WOLF_IN_GRASS)]
-
         for k in range(start, int(w.STEPS_ENTRY.get()) if w.STEPS_ENTRY.get() <> '' else 200):
             if w.SIMULATION_PAUSE:
                 w.SIMULATION_PAUSE = False
@@ -425,6 +427,11 @@ class App(object):
 
             table.randomPlacement(w.GRASS, grass_add_no)
             self.master.update()
+
+        self.button_start['state'] = 'disabled'
+        self.button_init['state'] = 'active'
+        self.button_end['state'] = 'disabled'
+        self.button_pause['state'] = 'disabled'
 
     @staticmethod
     def redraw_plot(x_line, y_line, plot, canvas, step_no, title, table):
