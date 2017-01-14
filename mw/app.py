@@ -374,7 +374,7 @@ class App(object):
             if w.SIMULATION_STOP:
                 w.SIMULATION_STOP = False
                 return
-            moved_matrix = [[range(0, len(table.widgets[n]))]
+            moved_matrix = [[0 for m in range(0, len(table.widgets[n]))]
                             for n in range(0, len(table.widgets))]
             for i in range(0, len(table.widgets)):
                 for j in range(0, len(table.widgets[i])):
