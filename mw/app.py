@@ -289,7 +289,7 @@ class App(object):
     def initialize(self, table):
         """Initializes the table with agents."""
         self.button_start['state'] = 'active'
-        table.reset(w.EMPTY)
+        table.reset()
         w.SIMULATION_PAUSE = False
         w.SIMULATION_STOP = False
         w.SIMULATION_RESUME = False
@@ -333,9 +333,9 @@ class App(object):
         grass_no = round(random_number_generator(grass_mean, grass_variance))
         grass_no = 0.0 if grass_no < 0 else grass_no
 
-        table.randomPlacement(w.RABBIT, rabbit_no)
-        table.randomPlacement(w.WOLF, wolf_no)
-        table.randomPlacement(w.GRASS, grass_no)
+        table.random_placement(w.RABBIT, rabbit_no)
+        table.random_placement(w.WOLF, wolf_no)
+        table.random_placement(w.GRASS, grass_no)
 
     @property
     def master(self):
@@ -430,7 +430,7 @@ class App(object):
             grass_add_no = round(random_number_generator(grass_mean, grass_variance))
             grass_add_no = 0.0 if grass_add_no < 0 else grass_add_no
 
-            table.randomPlacement(w.GRASS, grass_add_no)
+            table.random_placement(w.GRASS, grass_add_no)
             self.master.update()
 
         self.button_start['state'] = 'disabled'
@@ -511,7 +511,7 @@ class SimpleTable(tk.Frame):
                     places.append((i, j))
         return places
 
-    def randomPlacement(self, image, counter):
+    def random_placement(self, image, counter):
         """Creates 'counter' number of agents for a given 'image'"""
         empty = self.get_free_places()
         while counter > 0 and len(empty) > 0:
@@ -529,12 +529,12 @@ class SimpleTable(tk.Frame):
             empty.remove(empty[rand_place])
             counter -= 1
 
-    def reset(self, empty):
+    def reset(self):
         """Fills the table with 'empty' images and resets agents."""
         for i in range(0, self._rows):
             for j in range(0, self.columns):
-                self._widgets[i][j].configure(image=empty)
-                self._widgets[i][j].image = empty
+                self._widgets[i][j].configure(image=w.EMPTY)
+                self._widgets[i][j].image = w.EMPTY
                 self._widgets[i][j].agent = None
 
 if __name__ == "__main__":
