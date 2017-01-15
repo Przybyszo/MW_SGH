@@ -281,16 +281,19 @@ class WolfAgent(Agent):
 
         if move == w.UP:
             self.rule.perform_move(self.app, plane, x_pos, y_pos, x_pos - 1, y_pos)
-            moved_matrix[x_pos - 1][y_pos] = 1
+            x_pos = x_pos - 1
         if move == w.DOWN:
             self.rule.perform_move(self.app, plane, x_pos, y_pos, x_pos + 1, y_pos)
-            moved_matrix[x_pos + 1][y_pos] = 1
+            x_pos = x_pos + 1
         if move == w.LEFT:
             self.rule.perform_move(self.app, plane, x_pos, y_pos, x_pos, y_pos - 1)
-            moved_matrix[x_pos][y_pos - 1] = 1
+            y_pos = y_pos - 1
         if move == w.RIGHT:
             self.rule.perform_move(self.app, plane, x_pos, y_pos, x_pos, y_pos + 1)
-            moved_matrix[x_pos][y_pos + 1] = 1
+            y_pos = y_pos + 1
+
+        moved_matrix[x_pos][y_pos] = 1
+        self.reproduce(plane, x_pos, y_pos, max_x, max_y, moved_matrix)
 
     def add_energy(self, energy):
         """Adds energy to agent's energy."""
