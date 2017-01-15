@@ -64,12 +64,12 @@ class RabbitAgent(Agent):
         if w.RABBIT_ENERGY_ENTRY_MEAN.get() <> '':
             rabbit_mean = float(w.RABBIT_ENERGY_ENTRY_MEAN.get())
         else:
-            rabbit_mean = 5.0
+            rabbit_mean = float(w.CONFIG.get("RABBIT", "DEFAULT_ENERGY_MEAN"))
 
         if w.RABBIT_ENERGY_ENTRY_VARIANCE.get() <> '':
             rabbit_variance = float(w.RABBIT_ENERGY_ENTRY_VARIANCE.get())
         else:
-            rabbit_variance = 0.0
+            rabbit_variance = float(w.CONFIG.get("RABBIT", "DEFAULT_ENERGY_VARIANCE"))
 
         rabbit_energy = random_number_generator(rabbit_mean, rabbit_variance)
         rabbit_energy = 0.0 if rabbit_energy < 0 else rabbit_energy
@@ -80,12 +80,12 @@ class RabbitAgent(Agent):
         if w.BIRTHDAY_RABBIT_ENTRY_MEAN.get() <> '':
             rabbit_mean = float(w.BIRTHDAY_RABBIT_ENTRY_MEAN.get())
         else:
-            rabbit_mean = 10.0
+            rabbit_mean = float(w.CONFIG.get("RABBIT", "DEFAULT_BIRTHDAY_THRESHOLD_MEAN"))
 
         if w.BIRTHDAY_RABBIT_ENTRY_VARIANCE.get() <> '':
             rabbit_variance = float(w.BIRTHDAY_RABBIT_ENTRY_VARIANCE.get())
         else:
-            rabbit_variance = 0.0
+            rabbit_variance = float(w.CONFIG.get("RABBIT", "DEFAULT_BIRTHDAY_THRESHOLD_VARIANCE"))
 
         rabbit_threshold = random_number_generator(rabbit_mean, rabbit_variance)
         rabbit_threshold = 0.0 if rabbit_threshold < 0 else rabbit_threshold
@@ -149,12 +149,12 @@ class RabbitAgent(Agent):
         if w.RABBIT_MOVE_COST_ENTRY_MEAN.get() <> '':
             move_energy_mean = float(w.RABBIT_MOVE_COST_ENTRY_MEAN.get())
         else:
-            move_energy_mean = 0.5
+            move_energy_mean = float(w.CONFIG.get("RABBIT", "DEFAULT_MOVEMENT_COST_MEAN"))
 
         if w.RABBIT_MOVE_COST_ENTRY_VARIANCE.get() <> '':
             move_energy_variance = float(w.RABBIT_MOVE_COST_ENTRY_VARIANCE.get())
         else:
-            move_energy_variance = 0.0
+            move_energy_variance = float(w.CONFIG.get("RABBIT", "DEFAULT_MOVEMENT_COST_VARIANCE"))
 
         move_energy = random_number_generator(move_energy_mean, move_energy_variance)
         move_energy = 0.0 if move_energy < 0 else move_energy
@@ -206,12 +206,12 @@ class WolfAgent(Agent):
         if w.WOLF_ENERGY_ENTRY_MEAN.get() <> '':
             wolf_mean = float(w.WOLF_ENERGY_ENTRY_MEAN.get())
         else:
-            wolf_mean = 10.0
+            wolf_mean = float(w.CONFIG.get('WOLF', 'DEFAULT_ENERGY_MEAN'))
 
         if w.WOLF_ENERGY_ENTRY_VARIANCE.get() <> '':
             wolf_variance = float(w.WOLF_ENERGY_ENTRY_VARIANCE.get())
         else:
-            wolf_variance = 0.0
+            wolf_variance = float(w.CONFIG.get('WOLF', 'DEFAULT_ENERGY_VARIANCE'))
 
         wolf_energy = random_number_generator(wolf_mean, wolf_variance)
         wolf_energy = 0.0 if wolf_energy < 0 else wolf_energy
@@ -221,12 +221,12 @@ class WolfAgent(Agent):
         if w.BIRTHDAY_WOLF_ENTRY_MEAN.get() <> '':
             wolf_mean = float(w.BIRTHDAY_WOLF_ENTRY_MEAN.get())
         else:
-            wolf_mean = 20.0
+            wolf_mean = float(w.CONFIG.get('WOLF', 'DEFAULT_BIRTHDAY_THRESHOLD_MEAN'))
 
         if w.BIRTHDAY_WOLF_ENTRY_VARIANCE.get() <> '':
             wolf_variance = float(w.BIRTHDAY_WOLF_ENTRY_VARIANCE.get())
         else:
-            wolf_variance = 0.0
+            wolf_variance = float(w.CONFIG.get('WOLF', 'DEFAULT_BIRTHDAY_THRESHOLD_VARIANCE'))
 
         wolf_threshold = random_number_generator(wolf_mean, wolf_variance)
         wolf_threshold = 0.0 if wolf_threshold < 0 else wolf_threshold
@@ -248,12 +248,12 @@ class WolfAgent(Agent):
         if w.WOLF_MOVE_COST_ENTRY_MEAN.get() <> '':
             move_energy_mean = float(w.WOLF_MOVE_COST_ENTRY_MEAN.get())
         else:
-            move_energy_mean = 0.5
+            move_energy_mean = float(w.CONFIG.get('WOLF', 'DEFAULT_MOVEMENT_COST_MEAN'))
 
         if w.WOLF_MOVE_COST_ENTRY_VARIANCE.get() <> '':
             move_energy_variance = float(w.WOLF_MOVE_COST_ENTRY_VARIANCE.get())
         else:
-            move_energy_variance = 0.0
+            move_energy_variance = float(w.CONFIG.get('WOLF', 'DEFAULT_MOVEMENT_COST_VARIANCE'))
 
         move_energy = random_number_generator(move_energy_mean, move_energy_variance)
         move_energy = 0.0 if move_energy < 0 else move_energy
@@ -343,12 +343,12 @@ class GrassAgent(Agent):
         if w.GRASS_ENERGY_ENTRY_MEAN.get() <> '':
             grass_mean = float(w.GRASS_ENERGY_ENTRY_MEAN.get())
         else:
-            grass_mean = 1.0
+            grass_mean = float(w.CONFIG.get("GRASS", "DEFAULT_ENERGY_MEAN"))
 
         if w.GRASS_ENERGY_ENTRY_VARIANCE.get() <> '':
             grass_variance = float(w.GRASS_ENERGY_ENTRY_VARIANCE.get())
         else:
-            grass_variance = 0.0
+            grass_variance = float(w.CONFIG.get("GRASS", "DEFAULT_ENERGY_VARIANCE"))
 
         grass_energy = random_number_generator(grass_mean, grass_variance)
         grass_energy = 0.0 if grass_energy < 0 else grass_energy

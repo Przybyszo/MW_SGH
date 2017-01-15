@@ -52,7 +52,8 @@ class App(object):
         config_path = getcwd() + '/config/config.ini'
         config.read(config_path)
 
-        self.prepare_images(config)
+        w.CONFIG = config
+        self.prepare_images()
 
         master.title("Multiagent systems - rabbitsWolfsGrass")
         master.minsize(width=800, height=800)
@@ -64,14 +65,14 @@ class App(object):
         self.setup(frame, master, table)
 
     @staticmethod
-    def prepare_images(config):
+    def prepare_images():
         """Prepares images for agents that are used in the simulation."""
-        w.DISTRIBUTION = config.get('SIMULATION', 'DISTRIBUTION')
-        rabbit_path = getcwd() + config.get('RABBIT', 'RELATIVE_PATH')
-        wolf_path = getcwd() + config.get('WOLF', 'RELATIVE_PATH')
-        grass_path = getcwd() + config.get('GRASS', 'RELATIVE_PATH')
-        wolf_in_grass_path = getcwd() + config.get('WOLF_IN_GRASS', 'RELATIVE_PATH')
-        empty_path = getcwd() + config.get('EMPTY', 'RELATIVE_PATH')
+        w.DISTRIBUTION = w.CONFIG.get('SIMULATION', 'DISTRIBUTION')
+        rabbit_path = getcwd() + w.CONFIG.get('RABBIT', 'RELATIVE_PATH')
+        wolf_path = getcwd() + w.CONFIG.get('WOLF', 'RELATIVE_PATH')
+        grass_path = getcwd() + w.CONFIG.get('GRASS', 'RELATIVE_PATH')
+        wolf_in_grass_path = getcwd() + w.CONFIG.get('WOLF_IN_GRASS', 'RELATIVE_PATH')
+        empty_path = getcwd() + w.CONFIG.get('EMPTY', 'RELATIVE_PATH')
 
         rabbit = Image.open(rabbit_path)
         grass = Image.open(grass_path)
@@ -296,12 +297,12 @@ class App(object):
         if w.RABBIT_INIT_ENTRY_MEAN.get() <> '':
             rabbit_mean = float(w.RABBIT_INIT_ENTRY_MEAN.get())
         else:
-            rabbit_mean = 5.0
+            rabbit_mean = float(w.CONFIG.get("RABBIT", "DEFAULT_INIT_MEAN"))
 
         if w.RABBIT_INIT_ENTRY_VARIANCE.get() <> '':
             rabbit_variance = float(w.RABBIT_INIT_ENTRY_VARIANCE.get())
         else:
-            rabbit_variance = 0.0
+            rabbit_variance = float(w.CONFIG.get("RABBIT", "DEFAULT_INIT_VARIANCE"))
 
         rabbit_no = round(random_number_generator(rabbit_mean, rabbit_variance))
         rabbit_no = 0.0 if rabbit_no < 0 else rabbit_no
@@ -309,12 +310,12 @@ class App(object):
         if w.WOLF_INIT_ENTRY_MEAN.get() <> '':
             wolf_mean = float(w.WOLF_INIT_ENTRY_MEAN.get())
         else:
-            wolf_mean = 5.0
+            wolf_mean = float(w.CONFIG.get("WOLF", "DEFAULT_INIT_MEAN"))
 
         if w.WOLF_INIT_ENTRY_VARIANCE.get() <> '':
             wolf_variance = float(w.WOLF_INIT_ENTRY_VARIANCE.get())
         else:
-            wolf_variance = 0.0
+            wolf_variance = float(w.CONFIG.get("WOLF", "DEFAULT_INIT_VARIANCE"))
 
         wolf_no = round(random_number_generator(wolf_mean, wolf_variance))
         wolf_no = 0.0 if wolf_no < 0 else wolf_no
@@ -322,12 +323,12 @@ class App(object):
         if w.GRASS_INIT_ENTRY_MEAN.get() <> '':
             grass_mean = float(w.GRASS_INIT_ENTRY_MEAN.get())
         else:
-            grass_mean = 5.0
+            grass_mean = float(w.CONFIG.get("GRASS", "DEFAULT_INIT_MEAN"))
 
         if w.GRASS_INIT_ENTRY_VARIANCE.get() <> '':
             grass_variance = float(w.GRASS_INIT_ENTRY_VARIANCE.get())
         else:
-            grass_variance = 0.0
+            grass_variance = float(w.CONFIG.get("GRASS", "DEFAULT_INIT_VARIANCE"))
 
         grass_no = round(random_number_generator(grass_mean, grass_variance))
         grass_no = 0.0 if grass_no < 0 else grass_no
@@ -364,7 +365,11 @@ class App(object):
             rabbit_no = [self.count_agents(table, w.RABBIT)]
             grass_no = [self.count_agents(table, w.GRASS, w.WOLF_IN_GRASS)]
             wolf_no = [self.count_agents(table, w.WOLF, w.WOLF_IN_GRASS)]
-        for k in range(start, int(w.STEPS_ENTRY.get()) if w.STEPS_ENTRY.get() <> '' else 200):
+        if w.STEPS_ENTRY.get() <> '':
+            iteration_limit = int(w.STEPS_ENTRY.get())
+        else:
+            iteration_limit = int(w.CONFIG.get("SIMULATION", "DEFAULT_STEPS"))
+        for k in range(start,  iteration_limit):
             if w.SIMULATION_PAUSE:
                 w.SIMULATION_PAUSE = False
                 w.STEP_NO = step_no
